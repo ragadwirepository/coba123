@@ -1,1025 +1,627 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Form Input Penilaian Juri — Festival Inovasi</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Rekapitulasi Festival Inovasi</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --primary: #991b1b;
-      --primary-dark: #7f1414;
-      --green: #0f7629;
-      --green-hover: #0b5d20;
       --bg: #f8fafc;
       --card: #ffffff;
-      --border: #e2e8f0;
-      --text: #1e293b;
+      --text: #0f172a;
       --muted: #64748b;
+      --primary: #991b1b;
+      --primary-soft: #fef2f2;
+      --accent: #2563eb;
+      --border: #e2e8f0;
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      padding: 16px 24px;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 100%;
-      margin: 0 auto;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 20px 24px; width: 100%; }
     .header {
-      background: linear-gradient(90deg, #991b1b 0%, #b91c1c 100%);
+      background: linear-gradient(135deg, #7f1d1d, #b91c1c);
       color: #fff;
-      padding: 18px 26px;
+      padding: 20px 24px;
       border-radius: 12px;
-      margin-bottom: 18px;
-      box-shadow: 0 4px 12px rgba(153, 27, 27, 0.2);
+      margin-bottom: 16px;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
       flex-wrap: wrap;
-    }
-
-    .header-left h1 {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .header-left p {
-      font-size: 13px;
-      color: #fecaca;
-    }
-
-    .user-box {
-      display: none;
+      justify-content: space-between;
       align-items: center;
       gap: 12px;
     }
-
-    .user-box.show {
-      display: flex;
+    .header h1 { font-size: 20px; font-weight: 700; }
+    .header p { font-size: 13px; opacity: 0.92; margin-top: 4px; }
+    .status-box { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .badge {
+      background: rgba(255,255,255,0.18);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
     }
-
-    .user-meta {
-      text-align: right;
-    }
-
-    .user-meta-label {
-      font-size: 13px;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 4px;
-      max-width: 280px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .btn-logout {
+    .btn-refresh {
       background: #ffffff;
       color: #991b1b;
-      border: 1px solid #fecaca;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 11.5px;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 12px;
       font-weight: 700;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
     }
+    .btn-refresh:hover { background: #fee2e2; }
 
-    .btn-logout:hover {
-      background: #fee2e2;
-    }
-
-    .user-avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 8px;
-      background: #ffffff;
-      border: 2px solid #fecaca;
+    .sheet-tabs {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      overflow: hidden;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .tab-btn {
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .tab-btn:hover { border-color: #fca5a5; background: #fff5f5; }
+    .tab-btn.active {
+      background: #991b1b;
+      color: #ffffff;
+      border-color: #991b1b;
     }
 
-    .card {
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 640px) {
+      .kpi-grid { grid-template-columns: minmax(0, 1fr); }
+    }
+    .kpi-card {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 18px 22px;
-      margin-bottom: 18px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+      padding: 16px 18px;
     }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 18px;
-      align-items: start;
-    }
-
-    label {
-      display: block;
-      font-size: 11.5px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-    }
-
-    select, input[type="number"] {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      font-size: 14px;
-      background: #fff;
-      color: var(--text);
-    }
-
-    select:focus, input[type="number"]:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(153, 27, 27, 0.12);
-    }
-
-    .tab-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 14px;
-    }
-
-    .tab-btn {
-      padding: 8px 20px;
-      border: 1px solid #cbd5e1;
-      background: #fff;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 12.5px;
-      cursor: pointer;
-    }
-
-    .tab-btn.active {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-    }
-
-    .peserta-info {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      border-radius: 10px;
-      padding: 14px 18px;
-      margin-bottom: 18px;
+    .kpi-card-flex {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
       flex-wrap: wrap;
     }
-
-    .peserta-title-line {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 4px;
-    }
-
-    .peserta-info h3 {
-      font-size: 15px;
-      color: #7f1414;
-      font-weight: 700;
-    }
-
-    .peserta-info span {
-      font-size: 12.5px;
-      color: #991b1b;
-      font-weight: 600;
-    }
-
-    .badge {
-      background: #fff;
-      border: 1px solid #fca5a5;
-      color: #991b1b;
-      padding: 2px 9px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 800;
-    }
-
-    .btn-save {
-      background: var(--green);
-      color: #fff;
-      border: none;
-      padding: 12px 28px;
+    .btn-input-inovasi {
+      background: linear-gradient(135deg, #991b1b, #dc2626);
+      color: #ffffff;
+      text-decoration: none;
+      padding: 10px 16px;
       border-radius: 8px;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
-      cursor: pointer;
-      transition: background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 6px rgba(153, 27, 27, 0.25);
+      transition: background 0.2s, transform 0.1s;
       white-space: nowrap;
     }
-
-    .btn-save:hover {
-      background: var(--green-hover);
+    .btn-input-inovasi:hover {
+      background: linear-gradient(135deg, #7f1d1d, #b91c1c);
+      transform: translateY(-1px);
     }
+    .kpi-label { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; }
+    .kpi-value { font-size: 26px; font-weight: 700; margin-top: 4px; color: var(--text); }
+    .kpi-sub { font-size: 12px; color: var(--muted); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-    .btn-save:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    .top5-panel {
+      border-left: 5px solid var(--primary);
     }
-
-    .kriteria-wrapper {
-      overflow-x: auto;
-      padding-bottom: 6px;
-      margin-bottom: 16px;
-    }
-
-    .kriteria-list {
-      display: grid;
-      gap: 10px;
-      min-width: 960px;
-    }
-
-    .kriteria-list.cols-7 {
-      grid-template-columns: repeat(7, minmax(125px, 1fr));
-    }
-
-    .kriteria-list.cols-6 {
-      grid-template-columns: repeat(6, minmax(140px, 1fr));
-    }
-
-    .kriteria-item {
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px;
-      background: #fafafa;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .kriteria-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 8px;
-    }
-
-    .kriteria-nama {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.25;
-    }
-
-    .kriteria-bobot {
-      background: #fee2e2;
-      color: #991b1b;
-      border: 1px solid #fca5a5;
-      font-size: 13px;
-      font-weight: 800;
-      padding: 4px 9px;
-      border-radius: 6px;
-      white-space: nowrap;
-    }
-
-    .kriteria-item input[type="number"] {
-      padding: 8px 10px;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .footer-bar {
+    .top5-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 14px;
-      border-top: 1px solid var(--border);
-      padding-top: 16px;
-    }
-
-    .total-box {
-      font-size: 14px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
       gap: 8px;
+      margin-bottom: 12px;
     }
-
-    .total-box strong {
-      font-size: 22px;
-      color: var(--primary);
+    .top5-subtitle {
+      font-size: 12px;
+      color: var(--muted);
     }
-
-    .unsaved-tag {
-      display: none;
-      background: #fef3c7;
-      color: #92400e;
-      border: 1px solid #fcd34d;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 11.5px;
-      font-weight: 700;
-    }
-
-    .unsaved-tag.show {
-      display: inline-block;
-    }
-
-    .alert {
-      padding: 11px 16px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      margin-top: 12px;
-      display: none;
-    }
-
-    .alert.success {
-      display: block;
-      background: #dcfce7;
-      color: #166534;
-      border: 1px solid #86efac;
-    }
-
-    .alert.error {
-      display: block;
-      background: #fee2e2;
-      color: #991b1b;
-      border: 1px solid #fca5a5;
-    }
-
-    .rekap-mini {
+    .top5-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
       font-size: 13px;
     }
-
-    .rekap-mini th {
-      background: #991b1b;
-      color: #fff;
-      padding: 10px 12px;
+    .top5-table th {
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 700;
+      padding: 9px 12px;
+      border-bottom: 1px solid #fecaca;
       text-align: left;
+      position: static;
     }
-
-    .rekap-mini td {
-      padding: 10px 12px;
+    .top5-table td {
+      padding: 9px 12px;
       border-bottom: 1px solid var(--border);
     }
-
-    .rekap-mini tr:hover {
-      background: #fef2f2;
-      cursor: pointer;
+    .top5-table tr:last-child td {
+      border-bottom: none;
     }
-
-    .red-modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.55);
-      display: none;
+    .rank-badge {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      z-index: 9999;
-      padding: 16px;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 12px;
+      background: #f1f5f9;
+      color: var(--text);
+    }
+    .rank-1 { background: #fee2e2; color: #991b1b; }
+    .rank-2 { background: #dbeafe; color: #1d4ed8; }
+    .rank-3 { background: #fef3c7; color: #b45309; }
+    .top-score {
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      white-space: nowrap;
     }
 
-    .red-modal-backdrop.show {
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 850px) {
+      .charts-grid { grid-template-columns: minmax(0, 1fr); }
+    }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+    }
+    .panel-title { font-size: 15px; font-weight: 700; }
+    .chart-box { position: relative; height: 240px; width: 100%; margin-top: 12px; }
+
+    .toolbar {
       display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
     }
-
-    .red-modal-box {
-      background: #b91c1c;
-      color: #ffffff;
-      border: 2px solid #fecaca;
-      border-radius: 14px;
-      max-width: 460px;
-      width: 100%;
-      padding: 24px 26px;
-      text-align: center;
-      box-shadow: 0 18px 40px rgba(127, 20, 20, 0.45);
-      animation: modalPop 0.16s ease-out;
-    }
-
-    @keyframes modalPop {
-      from { transform: scale(0.94); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-
-    .red-modal-title {
-      font-size: 17px;
-      font-weight: 800;
-      margin-bottom: 8px;
-      letter-spacing: 0.3px;
-    }
-
-    .red-modal-msg {
-      font-size: 14px;
-      line-height: 1.45;
-      color: #fef2f2;
-      margin-bottom: 20px;
-    }
-
-    .red-modal-btn {
-      background: #ffffff;
-      color: #991b1b;
-      border: none;
-      padding: 10px 26px;
+    input[type="text"], select {
+      border: 1px solid var(--border);
       border-radius: 8px;
-      font-size: 13.5px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: background 0.15s;
+      padding: 8px 12px;
+      font-size: 13px;
+      background: #fff;
+      color: var(--text);
     }
-
-    .red-modal-btn:hover {
-      background: #fee2e2;
+    .table-wrap { overflow-x: auto; max-height: 620px; overflow-y: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 9px 11px; border-bottom: 1px solid var(--border); text-align: left; }
+    th { background: #f1f5f9; font-weight: 700; position: sticky; top: 0; z-index: 1; }
+    th.center, td.center { text-align: center; }
+    tr:hover td { background: #fafafa; }
+    .pill-cat {
+      background: #eff6ff;
+      color: var(--accent);
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .check-yes { color: #16a34a; font-weight: 700; font-size: 15px; }
+    .check-no { color: #cbd5e1; font-size: 14px; }
+    .score-pill {
+      display: inline-block;
+      min-width: 26px;
+      text-align: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+      background: #f1f5f9;
+    }
+    .score-high { background: #dcfce7; color: #166534; }
+    .footer-row td { background: #fef2f2; font-weight: 700; color: var(--primary); position: sticky; bottom: 0; }
+    .error-banner {
+      display: none;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      font-size: 13px;
     }
   </style>
 </head>
 <body>
-  <div id="redModal" class="red-modal-backdrop" onclick="closeRedModal()">
-    <div class="red-modal-box" onclick="event.stopPropagation()">
-      <div class="red-modal-title">PERHATIAN</div>
-      <div id="redModalMsg" class="red-modal-msg">-</div>
-      <button class="red-modal-btn" onclick="closeRedModal()">Mengerti</button>
+  <div class="header">
+    <div>
+      <h1>Dashboard Rekapitulasi Festival Inovasi</h1>
+      <p id="lastUpdateText">Menghubungkan ke 4 sheet di Google Sheets...</p>
+    </div>
+    <div class="status-box">
+      <span class="badge" id="statusBadge">Memuat data...</span>
+      <button class="btn-refresh" type="button" onclick="loadLiveData()">↻ Refresh Sekarang</button>
     </div>
   </div>
 
-  <div class="container">
-    <div class="header">
-      <div class="header-left">
-        <h1>Form Input Penilaian Juri — Festival Inovasi</h1>
-        <p id="statusMsg">Pilih nama juri untuk memuat daftar peserta dan kolom indikator penilaian (Nilai 1 - 10)</p>
-      </div>
+  <div class="sheet-tabs" id="sheetTabs">
+    <button class="tab-btn active" data-sheet="IDE OPD" onclick="selectSheet('IDE OPD')">IDE OPD</button>
+    <button class="tab-btn" data-sheet="AKTIF OPD" onclick="selectSheet('AKTIF OPD')">AKTIF OPD</button>
+    <button class="tab-btn" data-sheet="IDE UNIT" onclick="selectSheet('IDE UNIT')">IDE UNIT</button>
+    <button class="tab-btn" data-sheet="AKTIF UNIT" onclick="selectSheet('AKTIF UNIT')">AKTIF UNIT</button>
+    <button class="tab-btn" data-sheet="SEMUA" onclick="selectSheet('SEMUA')">Semua Sheet</button>
+  </div>
 
-      <div id="userBox" class="user-box">
-        <div class="user-meta">
-          <div id="headerUserName" class="user-meta-label">Nama user</div>
-          <button type="button" class="btn-logout" onclick="logoutUser()">
-            <span>&#128273;</span>
-            <span>Logout</span>
-          </button>
-        </div>
-        <div class="user-avatar" title="User Juri">
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="8" r="4" fill="#1e293b"/>
-            <path d="M4 20c0-3.314 3.582-6 8-6s8 2.686 8 6" fill="#2563eb"/>
-          </svg>
-        </div>
+  <div class="error-banner" id="errorBanner"></div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card kpi-card-flex">
+      <div>
+        <div class="kpi-label">Total Inovasi</div>
+        <div class="kpi-value" id="kpiTotalInovasi">-</div>
+        <div class="kpi-sub" id="kpiSheetLabel">Sheet: IDE OPD</div>
       </div>
+      <a href="https://doclitbangkotapkl-ui.github.io/inputnilaifestivalinovasi/" target="_blank" rel="noopener noreferrer" class="btn-input-inovasi">
+        + Input Nilai Inovasi
+      </a>
     </div>
-
-    <div id="selectorCard" class="card">
-      <div class="form-grid">
-        <div id="juriSelectorWrap">
-          <label for="selectJuri">Pilih Nama Juri</label>
-          <select id="selectJuri" onchange="onJuriChange()">
-            <option value="">-- Pilih Juri --</option>
-            <option value="1">1. Dr. Kusuma Adi Achmad, ST.,MT (AKTIF)</option>
-            <option value="2">2. Ahmad Ilyas (AKTIF)</option>
-            <option value="3">3. Junaenah, S.AP., M.M (AKTIF)</option>
-            <option value="4">4. Fahrus Salis (IDE)</option>
-            <option value="5">5. Ade Asep Syarifuddin (IDE)</option>
-            <option value="6">6. Dwi Agustina, S.Pd.,M.Pd.B.I.,PhD (IDE)</option>
-            <option value="7">7. Sevina Mahardani, ST.,MT.,M.Sc (AKTIF & IDE)</option>
-          </select>
-        </div>
-
-        <div id="pesertaSelectorWrap" style="display:none;">
-          <label for="selectPeserta">Pilih Peserta / Inovasi (Klik lalu ketik untuk mencari)</label>
-          <select id="selectPeserta" onkeydown="handleDropdownTypeSearch(event)" onchange="onPesertaSelectChange()"></select>
-        </div>
-      </div>
-
-      <div id="tabContainer" class="tab-row" style="display:none;"></div>
+    <div class="kpi-card">
+      <div class="kpi-label">Total Suara Masuk</div>
+      <div class="kpi-value" id="kpiTotalSuara">-</div>
+      <div class="kpi-sub">Akumulasi seluruh penilai</div>
     </div>
+  </div>
 
-    <div id="formCard" class="card" style="display:none;">
-      <div class="peserta-info">
-        <div>
-          <div class="peserta-title-line">
-            <h3 id="infoNamaInovasi">-</h3>
-            <span class="badge" id="infoKategoriBadge">-</span>
-          </div>
-          <span id="infoInstansi">-</span>
-        </div>
-      </div>
-
-      <div class="kriteria-wrapper">
-        <div id="kriteriaContainer" class="kriteria-list"></div>
-      </div>
-
-      <div class="footer-bar">
-        <div class="total-box">
-          <span>Estimasi Total Terbobot (Layar):</span>
-          <strong id="liveTotal">0.00</strong>
-          <span id="unsavedTag" class="unsaved-tag">Belum Disimpan! Klik "Simpan Nilai" dulu</span>
-        </div>
-
-        <button class="btn-save" id="btnSimpan" onclick="submitNilai()">Simpan Nilai</button>
-      </div>
-
-      <div id="alertBox" class="alert"></div>
+  <div class="panel top5-panel">
+    <div class="top5-header">
+      <div class="panel-title" id="top5Title">5 Inovasi dengan Suara Tertinggi — IDE OPD</div>
+      <div class="top5-subtitle">Diurutkan berdasarkan perolehan suara terbanyak</div>
     </div>
+    <div class="table-wrap" style="max-height: none;">
+      <table class="top5-table">
+        <thead>
+          <tr>
+            <th class="center" style="width: 70px;">Peringkat</th>
+            <th>Nama Inovasi</th>
+            <th>OPD / Unit</th>
+            <th class="center">Kategori</th>
+            <th class="center" style="width: 110px;">Total Suara</th>
+          </tr>
+        </thead>
+        <tbody id="top5Body">
+          <tr>
+            <td colspan="5" class="center kpi-sub">Menunggu data...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-    <div id="summaryCard" class="card" style="display:none;">
-      <label>Status Input Indikator Anda (Klik baris untuk mengedit nilai)</label>
-      <div style="overflow-x:auto;">
-        <table class="rekap-mini">
-          <thead>
-            <tr>
-              <th style="width:55px;">No</th>
-              <th>Nama Inovasi</th>
-              <th>OPD / Sekolah</th>
-              <th>Kategori</th>
-              <th style="text-align:right;">Indikator Terisi</th>
-            </tr>
-          </thead>
-          <tbody id="summaryBody"></tbody>
-        </table>
-      </div>
+  <div class="charts-grid">
+    <div class="panel">
+      <div class="panel-title">Perolehan Suara per Inovasi</div>
+      <div class="chart-box"><canvas id="chartInovasi"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Jumlah Inovasi Dipilih per Penilai</div>
+      <div class="chart-box"><canvas id="chartPenilai"></canvas></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title" id="tablePanelTitle">Tabel Rekapan — IDE OPD</div>
+    <div class="toolbar" style="margin-top: 12px;">
+      <input type="text" id="searchInput" placeholder="Cari nama inovasi, OPD/unit, atau pemilih..." style="min-width: 260px; flex: 1;" />
+      <select id="sortSelect">
+        <option value="default">Urutan Sesuai Spreadsheet</option>
+        <option value="suara_desc">Suara Tertinggi ke Terendah</option>
+        <option value="nama_asc">Nama Inovasi (A-Z)</option>
+        <option value="opd_asc">OPD / Unit (A-Z)</option>
+      </select>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama Inovasi</th>
+            <th>OPD / Unit</th>
+            <th class="center">Kategori</th>
+            <th class="center">Kusuma</th>
+            <th class="center">Ahmad</th>
+            <th class="center">Junaenah</th>
+            <th class="center">Fahrus</th>
+            <th class="center">Ade</th>
+            <th class="center">Dwi</th>
+            <th class="center">Sevina</th>
+            <th class="center">Total</th>
+            <th>Pemilih</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+        <tfoot>
+          <tr class="footer-row" id="footerRow"></tr>
+        </tfoot>
+      </table>
     </div>
   </div>
 
   <script>
-    // GANTI URL DI BAWAH DENGAN URL WEB APP APPS SCRIPT ANDA (/exec)
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxea5it8SLyJd0o6Kt5mTSYv_Lr6EpqE-G0yw3F53Q2IT31zByKzBiUpDEfamMqFk0Anw/exec';
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxQrqgsaszA_5NQKwLEYetOiexlxrZCmZ6A0AHpLbcNN34Wb6GyVRCR1TFmd2bgTHTD/exec";
+    const SHEET_ORDER = ["IDE OPD", "AKTIF OPD", "IDE UNIT", "AKTIF UNIT"];
 
-    const MIN_NILAI = 1;
-    const MAX_NILAI = 10;
+    let activeSheet = "IDE OPD";
+    let allSheetsData = {};
+    let reviewers = [
+      "Dr. Kusuma Adi Achmad, ST.,MT",
+      "Ahmad Ilyas",
+      "Junaenah, S.AP., M.M",
+      "Fahrus Salis",
+      "Ade Asep Syarifudin",
+      "Dwi Agustina, S.Pd.,M.Pd.B.I., PhD",
+      "Sevina Mahardini, ST.,MT.,M.Sc"
+    ];
+    let rows = [];
+    let chartInovasi, chartPenilai;
 
-    const KRITERIA_CONFIG = {
-      aktif: [
-        { nama: 'Kebaharuan', bobot: 20 },
-        { nama: 'Jumlah pengguna', bobot: 10 },
-        { nama: 'Luasan Manfaat', bobot: 10 },
-        { nama: 'Replikatif', bobot: 20 },
-        { nama: 'Kelayakan keberlanjutan', bobot: 15 },
-        { nama: 'Keefektifan', bobot: 15 },
-        { nama: 'Pembebanan penerima manfaat', bobot: 10 }
-      ],
-      ide: [
-        { nama: 'Kebaharuan', bobot: 10 },
-        { nama: 'Kemanfaatan', bobot: 20 },
-        { nama: 'Efektivitas', bobot: 20 },
-        { nama: 'Kemudahan', bobot: 15 },
-        { nama: 'Potensi Keberlanjutan', bobot: 20 },
-        { nama: 'Interkoneksi', bobot: 15 }
-      ]
+    function getTotalSuara(item) {
+      return item.votes.reduce((a, b) => a + b, 0);
+    }
+
+    function getPemilih(item) {
+      const names = reviewers.filter((_, idx) => item.votes[idx] === 1);
+      return names.length ? names.join(", ") : "-";
+    }
+
+    function buildActiveView() {
+      if (activeSheet === "SEMUA") {
+        let combined = [];
+        SHEET_ORDER.forEach(name => {
+          const s = allSheetsData[name];
+          if (s && Array.isArray(s.rows)) {
+            if (s.reviewers && s.reviewers.length === 7 && s.reviewers.some(Boolean)) {
+              reviewers = s.reviewers;
+            }
+            s.rows.forEach(r => combined.push({ ...r, kat: r.kat || name }));
+          }
+        });
+        rows = combined;
+      } else {
+        const s = allSheetsData[activeSheet] || { rows: [], reviewers: reviewers };
+        if (s.reviewers && s.reviewers.length === 7 && s.reviewers.some(Boolean)) {
+          reviewers = s.reviewers;
+        }
+        rows = Array.isArray(s.rows) ? s.rows : [];
+      }
+
+      document.getElementById("kpiSheetLabel").textContent = `Sheet: ${activeSheet}`;
+      document.getElementById("top5Title").textContent = `5 Inovasi dengan Suara Tertinggi — ${activeSheet}`;
+      document.getElementById("tablePanelTitle").textContent = `Tabel Rekapan — ${activeSheet}`;
+      renderTable();
+    }
+
+    window.selectSheet = function(sheetName) {
+      activeSheet = sheetName;
+      document.querySelectorAll("#sheetTabs .tab-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.getAttribute("data-sheet") === sheetName);
+      });
+      buildActiveView();
     };
 
-    let currentData = null;
-    let activeTipe = '';
-    let activePesertaIdx = 0;
-    let hasUnsavedChanges = false;
-    let typeBuffer = '';
-    let typeTimer = null;
+    function updateKPIs() {
+      const totalSuara = rows.reduce((sum, r) => sum + getTotalSuara(r), 0);
 
-    window.addEventListener('beforeunload', function(e) {
-      if (hasUnsavedChanges) {
-        e.preventDefault();
-        e.returnValue = '';
-      }
-    });
+      const top5 = [...rows]
+        .map(r => ({
+          nama: r.nama,
+          opd: r.opd || "-",
+          kat: r.kat || activeSheet,
+          suara: getTotalSuara(r)
+        }))
+        .filter(item => item.suara > 0)
+        .sort((a, b) => b.suara - a.suara || a.nama.localeCompare(b.nama, "id"))
+        .slice(0, 5);
 
-    function showRedModal(msg) {
-      document.getElementById('redModalMsg').textContent = msg;
-      document.getElementById('redModal').classList.add('show');
-    }
+      document.getElementById("kpiTotalInovasi").textContent = rows.length;
+      document.getElementById("kpiTotalSuara").textContent = totalSuara;
 
-    function closeRedModal() {
-      document.getElementById('redModal').classList.remove('show');
-    }
-
-    function setUnsavedState(dirty) {
-      hasUnsavedChanges = dirty;
-      const tag = document.getElementById('unsavedTag');
-      if (tag) {
-        tag.classList.toggle('show', dirty);
-      }
-    }
-
-    function blockIfUnsaved(customMsg) {
-      if (!hasUnsavedChanges) return false;
-      const msg = customMsg || 'Nilai pada inovasi ini belum disimpan! Klik tombol "Simpan Nilai" terlebih dahulu sebelum pindah ke inovasi lain.';
-      showRedModal(msg);
-      return true;
-    }
-
-    function logoutUser() {
-      if (blockIfUnsaved('Nilai inovasi saat ini belum disimpan! Simpan nilai dulu sebelum logout.')) {
-        return;
-      }
-
-      currentData = null;
-      activeTipe = '';
-      activePesertaIdx = 0;
-      setUnsavedState(false);
-      hideAlert();
-
-      const selectJuri = document.getElementById('selectJuri');
-      selectJuri.value = '';
-      selectJuri.dataset.prevJuri = '';
-
-      document.getElementById('headerUserName').textContent = 'Nama user';
-      document.getElementById('userBox').classList.remove('show');
-      document.getElementById('juriSelectorWrap').style.display = 'block';
-      document.getElementById('pesertaSelectorWrap').style.display = 'none';
-      document.getElementById('tabContainer').style.display = 'none';
-      document.getElementById('formCard').style.display = 'none';
-      document.getElementById('summaryCard').style.display = 'none';
-      document.getElementById('statusMsg').textContent =
-        'Pilih nama juri untuk memuat daftar peserta dan kolom indikator penilaian (Nilai 1 - 10)';
-    }
-
-    function formatWaktuBersih(waktuStr) {
-      if (!waktuStr) return '-';
-      const match = String(waktuStr).match(/\b(\d{1,2}:\d{2})\b/g);
-      if (match && match.length >= 2) {
-        return `${match[0]} - ${match[1]}`;
-      }
-      return String(waktuStr);
-    }
-
-    function formatStatusDropdown(item) {
-      const totalIndikator = KRITERIA_CONFIG[activeTipe].length;
-      const terisi = item.terisiCount || 0;
-      const statusText = terisi > 0 ? `[Terisi ${terisi}/${totalIndikator} indikator]` : '[Belum Diisi]';
-      return `${item.no}. ${item.namaInovasi} (${item.instansi}) ${statusText}`;
-    }
-
-    function handleDropdownTypeSearch(e) {
-      if (e.key.length !== 1 || e.ctrlKey || e.metaKey || e.altKey) return;
-      if (hasUnsavedChanges) {
-        e.preventDefault();
-        blockIfUnsaved();
-        return;
-      }
-
-      clearTimeout(typeTimer);
-      typeBuffer += e.key.toLowerCase();
-      typeTimer = setTimeout(() => { typeBuffer = ''; }, 900);
-
-      const select = document.getElementById('selectPeserta');
-      const matched = [...select.options].find(opt => opt.text.toLowerCase().includes(typeBuffer));
-      if (matched) {
-        e.preventDefault();
-        select.value = matched.value;
-        activePesertaIdx = Number(matched.value);
-        renderFormInput();
-      }
-    }
-
-    async function onJuriChange() {
-      const selectJuri = document.getElementById('selectJuri');
-      if (hasUnsavedChanges && selectJuri.dataset.prevJuri !== undefined) {
-        if (blockIfUnsaved('Nilai inovasi saat ini belum disimpan! Simpan nilai dulu sebelum mengganti juri.')) {
-          selectJuri.value = selectJuri.dataset.prevJuri;
-          return;
-        }
-      }
-
-      const juriId = selectJuri.value;
-      const statusMsg = document.getElementById('statusMsg');
-      setUnsavedState(false);
-      hideAlert();
-
-      if (!juriId) {
-        logoutUser();
-        return;
-      }
-
-      if (!API_URL || API_URL.includes('GANTI_DENGAN_URL_WEB_APP_APPS_SCRIPT_ANDA')) {
-        const errText = 'API_URL di index.html belum diisi dengan URL /exec Apps Script.';
-        statusMsg.textContent = errText;
-        showRedModal(errText);
-        return;
-      }
-
-      document.getElementById('formCard').style.display = 'none';
-      document.getElementById('summaryCard').style.display = 'none';
-      statusMsg.textContent = 'Memuat data juri dari spreadsheet...';
-
-      try {
-        const url = `${API_URL}?action=getData&juriId=${encodeURIComponent(juriId)}`;
-        const resp = await fetch(url, { cache: 'no-store' });
-        if (!resp.ok) throw new Error('HTTP ' + resp.status);
-        const res = await resp.json();
-
-        if (!res.success) {
-          throw new Error(res.error || 'Gagal memuat data juri');
-        }
-
-        const selectedOptionText = selectJuri.options[selectJuri.selectedIndex]?.text || '';
-        const namaTampil = res.nama || selectedOptionText || 'Nama user';
-
-        selectJuri.dataset.prevJuri = juriId;
-        currentData = res;
-        statusMsg.textContent = 'Terhubung sebagai: ' + namaTampil;
-        document.getElementById('headerUserName').textContent = namaTampil;
-        document.getElementById('headerUserName').title = namaTampil;
-
-        document.getElementById('juriSelectorWrap').style.display = 'none';
-        document.getElementById('userBox').classList.add('show');
-
-        setupTabs(res.akses);
-      } catch (err) {
-        selectJuri.value = selectJuri.dataset.prevJuri || '';
-        const errMsg = 'Gagal memuat data juri: ' + err.message;
-        statusMsg.textContent = errMsg;
-        showRedModal(errMsg);
-      }
-    }
-
-    function setupTabs(aksesList) {
-      const tabContainer = document.getElementById('tabContainer');
-      tabContainer.innerHTML = '';
-
-      if (aksesList.length > 1) {
-        tabContainer.style.display = 'flex';
-        aksesList.forEach((tipe, idx) => {
-          const btn = document.createElement('button');
-          btn.className = 'tab-btn' + (idx === 0 ? ' active' : '');
-          btn.textContent = 'KATEGORI ' + tipe.toUpperCase();
-          btn.onclick = function() {
-            if (tipe === activeTipe) return;
-            if (blockIfUnsaved('Nilai inovasi saat ini belum disimpan! Simpan nilai dulu sebelum pindah kategori.')) {
-              return;
-            }
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            switchTipe(tipe);
-          };
-          tabContainer.appendChild(btn);
-        });
+      const top5Body = document.getElementById("top5Body");
+      if (top5.length > 0) {
+        top5Body.innerHTML = top5.map((item, idx) => {
+          const rankClass = idx === 0 ? "rank-1" : idx === 1 ? "rank-2" : idx === 2 ? "rank-3" : "";
+          return `
+            <tr>
+              <td class="center"><span class="rank-badge ${rankClass}">${idx + 1}</span></td>
+              <td><strong>${item.nama}</strong></td>
+              <td>${item.opd}</td>
+              <td class="center"><span class="pill-cat">${item.kat}</span></td>
+              <td class="center"><span class="top-score">${item.suara} suara</span></td>
+            </tr>
+          `;
+        }).join("");
       } else {
-        tabContainer.style.display = 'none';
+        top5Body.innerHTML = `<tr><td colspan="5" class="center kpi-sub">Belum ada suara masuk</td></tr>`;
       }
 
-      switchTipe(aksesList[0]);
+      document.getElementById("statusBadge").textContent = `● Live • ${activeSheet} (${rows.length})`;
     }
 
-    function switchTipe(tipe) {
-      activeTipe = tipe;
-      activePesertaIdx = 0;
+    function renderCharts() {
+      const labels = rows.map(r => r.nama.length > 22 ? r.nama.slice(0, 22) + "…" : r.nama);
+      const suaraData = rows.map(r => getTotalSuara(r));
+      const shortNames = reviewers.map(name => name.replace(/^Dr\.\s*/i, "").split(" ")[0]);
+      const penilaiCounts = reviewers.map((_, idx) =>
+        rows.reduce((sum, r) => sum + (r.votes[idx] ? 1 : 0), 0)
+      );
 
-      const list = currentData.sheets[tipe] || [];
-      const selectPeserta = document.getElementById('selectPeserta');
-      selectPeserta.innerHTML = '';
-
-      list.forEach((item, idx) => {
-        const opt = document.createElement('option');
-        opt.value = idx;
-        opt.textContent = formatStatusDropdown(item);
-        selectPeserta.appendChild(opt);
-      });
-
-      document.getElementById('pesertaSelectorWrap').style.display = 'block';
-      document.getElementById('formCard').style.display = 'block';
-      document.getElementById('summaryCard').style.display = 'block';
-
-      renderFormInput();
-      renderSummaryTable();
-    }
-
-    function onPesertaSelectChange() {
-      const selectPeserta = document.getElementById('selectPeserta');
-      if (blockIfUnsaved()) {
-        selectPeserta.value = String(activePesertaIdx);
-        return;
-      }
-      activePesertaIdx = Number(selectPeserta.value);
-      renderFormInput();
-    }
-
-    function renderFormInput() {
-      hideAlert();
-      setUnsavedState(false);
-
-      const rawVal = document.getElementById('selectPeserta').value;
-      if (rawVal === '') return;
-
-      const idx = Number(rawVal);
-      activePesertaIdx = idx;
-
-      const list = currentData.sheets[activeTipe] || [];
-      const peserta = list[idx];
-      if (!peserta) return;
-
-      const waktuBersih = formatWaktuBersih(peserta.waktu);
-      document.getElementById('infoNamaInovasi').textContent = `${peserta.no}. ${peserta.namaInovasi}`;
-      document.getElementById('infoInstansi').textContent = `${peserta.instansi} • Jadwal: ${waktuBersih}`;
-      document.getElementById('infoKategoriBadge').textContent = `${activeTipe.toUpperCase()} — ${peserta.kategori}`;
-
-      const kriteriaList = KRITERIA_CONFIG[activeTipe];
-      const container = document.getElementById('kriteriaContainer');
-      container.className = 'kriteria-list ' + (kriteriaList.length === 7 ? 'cols-7' : 'cols-6');
-      container.innerHTML = '';
-
-      kriteriaList.forEach((k, i) => {
-        const val = peserta.skor[i] !== undefined ? peserta.skor[i] : '';
-        const div = document.createElement('div');
-        div.className = 'kriteria-item';
-        div.innerHTML = `
-          <div class="kriteria-head">
-            <span class="kriteria-nama">${escapeHtml(k.nama)}</span>
-            <span class="kriteria-bobot">Bobot ${k.bobot}%</span>
-          </div>
-          <input
-            type="number"
-            class="skor-input"
-            data-bobot="${k.bobot}"
-            min="${MIN_NILAI}"
-            max="${MAX_NILAI}"
-            step="0.01"
-            placeholder="1 - 10"
-            value="${val}"
-            oninput="onSkorInputChange(this)"
-          >
-        `;
-        container.appendChild(div);
-      });
-
-      hitungLiveTotal();
-    }
-
-    function onSkorInputChange(inputEl) {
-      if (inputEl && inputEl.value !== '') {
-        const num = Number(inputEl.value);
-        if (!isNaN(num)) {
-          if (num > MAX_NILAI) {
-            inputEl.value = MAX_NILAI;
-            showRedModal('Rentang nilai hanya 1 - 10. Nilai otomatis disesuaikan ke 10.');
-          } else if (num < MIN_NILAI) {
-            inputEl.value = MIN_NILAI;
-            showRedModal('Rentang nilai hanya 1 - 10. Nilai otomatis disesuaikan ke 1.');
+      if (chartInovasi) chartInovasi.destroy();
+      chartInovasi = new Chart(document.getElementById("chartInovasi"), {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [{
+            label: "Total Suara",
+            data: suaraData,
+            backgroundColor: "#b91c1c",
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { font: { size: 10 }, maxRotation: 45, minRotation: 30 } },
+            y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } }
           }
         }
-      }
-      setUnsavedState(true);
-      hitungLiveTotal();
-    }
-
-    function hitungLiveTotal() {
-      const inputs = document.querySelectorAll('.skor-input');
-      let total = 0;
-      inputs.forEach(inp => {
-        const nilai = Number(inp.value) || 0;
-        const bobot = Number(inp.dataset.bobot) || 0;
-        total += (nilai * bobot) / 100;
-      });
-      document.getElementById('liveTotal').textContent = total.toFixed(2);
-    }
-
-    async function submitNilai() {
-      const rawVal = document.getElementById('selectPeserta').value;
-      if (rawVal === '') return;
-
-      const idx = Number(rawVal);
-      const peserta = currentData.sheets[activeTipe][idx];
-      const inputs = document.querySelectorAll('.skor-input');
-
-      const skorArray = [];
-      let adaKosong = false;
-      let adaDiluarRentang = false;
-      let terisiCount = 0;
-
-      inputs.forEach(inp => {
-        if (inp.value === '') {
-          adaKosong = true;
-          skorArray.push('');
-        } else {
-          const num = Number(inp.value);
-          if (isNaN(num) || num < MIN_NILAI || num > MAX_NILAI) {
-            adaDiluarRentang = true;
-          }
-          skorArray.push(num);
-          terisiCount++;
-        }
       });
 
-      if (adaDiluarRentang) {
-        showRedModal('Setiap nilai indikator harus berada pada rentang 1 sampai 10.');
-        return;
-      }
-
-      if (adaKosong) {
-        showRedModal('Harap isi semua indikator (rentang nilai 1 - 10) sebelum menyimpan nilai.');
-        return;
-      }
-
-      const btn = document.getElementById('btnSimpan');
-      btn.disabled = true;
-      btn.textContent = 'Menyimpan...';
-      hideAlert();
-
-      try {
-        const resp = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: 'simpanNilai',
-            juriId: currentData.juriId,
-            tipe: activeTipe,
-            rowNumber: peserta.rowNumber,
-            skor: skorArray
-          })
-        });
-
-        if (!resp.ok) throw new Error('HTTP ' + resp.status);
-        const res = await resp.json();
-
-        if (res.success) {
-          peserta.skor = skorArray;
-          peserta.terisiCount = terisiCount;
-          setUnsavedState(false);
-          showAlert('success', res.message);
-
-          const selectPeserta = document.getElementById('selectPeserta');
-          const targetOpt = [...selectPeserta.options].find(o => Number(o.value) === idx);
-          if (targetOpt) {
-            targetOpt.textContent = formatStatusDropdown(peserta);
+      if (chartPenilai) chartPenilai.destroy();
+      chartPenilai = new Chart(document.getElementById("chartPenilai"), {
+        type: "bar",
+        data: {
+          labels: shortNames,
+          datasets: [{
+            label: "Inovasi Dipilih",
+            data: penilaiCounts,
+            backgroundColor: "#2563eb",
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { font: { size: 11 } } },
+            y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } }
           }
-          renderSummaryTable();
-        } else {
-          showRedModal('Gagal menyimpan: ' + res.error);
-          showAlert('error', 'Gagal menyimpan: ' + res.error);
         }
-      } catch (err) {
-        showRedModal('Error koneksi: ' + err.message);
-        showAlert('error', 'Error koneksi: ' + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Simpan Nilai';
-      }
+      });
     }
 
-    function renderSummaryTable() {
-      const list = currentData.sheets[activeTipe] || [];
-      const totalIndikator = KRITERIA_CONFIG[activeTipe].length;
-      const tbody = document.getElementById('summaryBody');
-      tbody.innerHTML = '';
+    function renderTable() {
+      const q = document.getElementById("searchInput").value.toLowerCase().trim();
+      const sortBy = document.getElementById("sortSelect").value;
 
-      list.forEach((item, idx) => {
-        const terisi = item.terisiCount || 0;
-        const tr = document.createElement('tr');
-        tr.onclick = function() {
-          if (blockIfUnsaved()) return;
-          document.getElementById('selectPeserta').value = String(idx);
-          activePesertaIdx = idx;
-          renderFormInput();
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
+      let filtered = rows.filter(item => {
+        const pemilihStr = getPemilih(item).toLowerCase();
+        return (
+          item.nama.toLowerCase().includes(q) ||
+          item.opd.toLowerCase().includes(q) ||
+          item.kat.toLowerCase().includes(q) ||
+          pemilihStr.includes(q)
+        );
+      });
+
+      if (sortBy === "suara_desc") {
+        filtered.sort((a, b) => getTotalSuara(b) - getTotalSuara(a));
+      } else if (sortBy === "nama_asc") {
+        filtered.sort((a, b) => a.nama.localeCompare(b.nama, "id"));
+      } else if (sortBy === "opd_asc") {
+        filtered.sort((a, b) => a.opd.localeCompare(b.opd, "id"));
+      }
+
+      const tbody = document.getElementById("tableBody");
+      tbody.innerHTML = "";
+
+      filtered.forEach((item, idx) => {
+        const total = getTotalSuara(item);
+        const tr = document.createElement("tr");
+        const checksHtml = item.votes.map(v => `
+          <td class="center">
+            ${v ? '<span class="check-yes">✔</span>' : '<span class="check-no">☐</span>'}
+          </td>
+        `).join("");
+
         tr.innerHTML = `
-          <td>${item.no}</td>
-          <td><strong>${escapeHtml(item.namaInovasi)}</strong></td>
-          <td>${escapeHtml(item.instansi)}</td>
-          <td>${item.kategori}</td>
-          <td style="text-align:right; font-weight:700; color:#991b1b;">${terisi} / ${totalIndikator}</td>
+          <td>${idx + 1}</td>
+          <td><strong>${item.nama}</strong></td>
+          <td>${item.opd}</td>
+          <td class="center"><span class="pill-cat">${item.kat}</span></td>
+          ${checksHtml}
+          <td class="center"><span class="score-pill ${total >= 3 ? "score-high" : ""}">${total}</span></td>
+          <td>${getPemilih(item)}</td>
         `;
         tbody.appendChild(tr);
       });
+
+      const perReviewerTotals = reviewers.map((_, rIdx) =>
+        rows.reduce((sum, r) => sum + (r.votes[rIdx] ? 1 : 0), 0)
+      );
+      const grandTotal = rows.reduce((sum, r) => sum + getTotalSuara(r), 0);
+
+      document.getElementById("footerRow").innerHTML = `
+        <td colspan="4">TOTAL INOVASI YANG DIPILIH</td>
+        ${perReviewerTotals.map(t => `<td class="center">${t}</td>`).join("")}
+        <td class="center">${grandTotal}</td>
+        <td>-</td>
+      `;
+
+      updateKPIs();
+      renderCharts();
     }
 
-    function showAlert(type, msg) {
-      const box = document.getElementById('alertBox');
-      box.className = 'alert ' + type;
-      box.textContent = msg;
+    async function loadLiveData() {
+      const errBox = document.getElementById("errorBanner");
+      if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("TEMPEL_URL")) {
+        errBox.style.display = "block";
+        errBox.textContent = "URL Apps Script belum diisi. Ganti tulisan TEMPEL_URL_WEB_APP_ANDA_DI_SINI dengan URL /exec dari Apps Script.";
+        return;
+      }
+
+      try {
+        document.getElementById("statusBadge").textContent = "Menyinkronkan...";
+        const res = await fetch(APPS_SCRIPT_URL);
+        const json = await res.json();
+
+        if (json.error) {
+          throw new Error(json.error);
+        }
+
+        errBox.style.display = "none";
+        allSheetsData = json.sheets || {};
+        document.getElementById("lastUpdateText").textContent =
+          `Terhubung ke 4 Sheet Google Sheets • Pembaruan terakhir: ${json.updatedAt || "-"} (Auto-refresh 15 detik)`;
+        buildActiveView();
+      } catch (err) {
+        errBox.style.display = "block";
+        errBox.textContent = "Gagal mengambil data dari Google Sheets: " + err.message;
+        document.getElementById("statusBadge").textContent = "⚠ Gagal Terhubung";
+      }
     }
 
-    function hideAlert() {
-      const box = document.getElementById('alertBox');
-      box.className = 'alert';
-      box.textContent = '';
-    }
+    document.getElementById("searchInput").addEventListener("input", renderTable);
+    document.getElementById("sortSelect").addEventListener("change", renderTable);
 
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
+    loadLiveData();
+    setInterval(loadLiveData, 15000);
   </script>
 </body>
 </html>
