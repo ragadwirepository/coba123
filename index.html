@@ -1,625 +1,595 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard Rekapitulasi Festival Inovasi</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <title>Dashboard Rekapitulasi Penilaian Festival Inovasi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     :root {
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --text: #0f172a;
-      --muted: #64748b;
-      --primary: #991b1b;
-      --primary-soft: #fef2f2;
-      --accent: #2563eb;
-      --border: #e2e8f0;
+      --primary-red: #9e1b1b;
+      --dark-red: #7f1414;
+      --border-color: #e5e7eb;
+      --text-dark: #1f2937;
+      --text-muted: #6b7280;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
-    body { background: var(--bg); color: var(--text); padding: 20px 24px; width: 100%; }
-    .header {
-      background: linear-gradient(135deg, #7f1d1d, #b91c1c);
-      color: #fff;
-      padding: 20px 24px;
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f8fafc;
+      color: var(--text-dark);
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    .header-banner {
+      background: linear-gradient(90deg, #991b1b 0%, #b91c1c 100%);
+      color: #ffffff;
       border-radius: 12px;
-      margin-bottom: 16px;
+      padding: 20px 28px;
       display: flex;
-      flex-wrap: wrap;
       justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      box-shadow: 0 4px 12px rgba(153, 27, 27, 0.2);
+      margin-bottom: 20px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-box {
+      width: 48px;
+      height: 54px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 4px;
+    }
+
+    .logo-box img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .header-title h1 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .header-title p {
+      font-size: 13px;
+      color: #fca5a5;
+    }
+
+    .header-right {
+      display: flex;
       align-items: center;
       gap: 12px;
     }
-    .header h1 { font-size: 20px; font-weight: 700; }
-    .header p { font-size: 13px; opacity: 0.92; margin-top: 4px; }
-    .status-box { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .badge {
-      background: rgba(255,255,255,0.18);
-      padding: 6px 12px;
-      border-radius: 999px;
-      font-size: 12px;
+
+    .status-pill {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 13px;
       font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #4ade80;
+      border-radius: 50%;
+    }
+
     .btn-refresh {
       background: #ffffff;
-      color: #991b1b;
+      color: var(--primary-red);
       border: none;
-      padding: 7px 14px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .btn-refresh:hover { background: #fee2e2; }
-
-    .top-action-bar {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-    .sheet-tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .tab-btn {
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--text);
       padding: 8px 16px;
-      border-radius: 8px;
+      border-radius: 6px;
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
     }
-    .tab-btn:hover { border-color: #fca5a5; background: #fff5f5; }
+
+    .btn-refresh:hover {
+      background: #fee2e2;
+    }
+
+    .btn-refresh:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .tab-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      padding: 10px 26px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: var(--text-dark);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
     .tab-btn.active {
-      background: #991b1b;
+      background: linear-gradient(180deg, #b91c1c 0%, #881313 100%);
       color: #ffffff;
-      border-color: #991b1b;
+      border-color: #881313;
+      box-shadow: 0 2px 6px rgba(153, 27, 27, 0.25);
     }
-    .btn-halaman-input {
-      background: #991b1b;
+
+    .right-controls {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn-input {
+      background: linear-gradient(180deg, #991b1b 0%, #7f1414 100%);
       color: #ffffff;
       text-decoration: none;
-      padding: 10px 18px;
-      border-radius: 10px;
-      font-size: 13px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      white-space: nowrap;
-      transition: background 0.15s;
-    }
-    .btn-halaman-input:hover {
-      background: #7f1d1d;
-    }
-
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-      margin-bottom: 16px;
-    }
-    @media (max-width: 640px) {
-      .kpi-grid { grid-template-columns: minmax(0, 1fr); }
-    }
-    .kpi-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px 18px;
-    }
-    .kpi-label { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; }
-    .kpi-value { font-size: 26px; font-weight: 700; margin-top: 4px; color: var(--text); }
-    .kpi-sub { font-size: 12px; color: var(--muted); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-    .top5-panel {
-      border-left: 5px solid var(--primary);
-    }
-    .top5-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-    .top5-subtitle {
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .top5-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-    .top5-table th {
-      background: var(--primary-soft);
-      color: var(--primary);
-      font-weight: 700;
-      padding: 9px 12px;
-      border-bottom: 1px solid #fecaca;
-      text-align: left;
-      position: static;
-    }
-    .top5-table td {
-      padding: 9px 12px;
-      border-bottom: 1px solid var(--border);
-    }
-    .top5-table tr:last-child td {
-      border-bottom: none;
-    }
-    .rank-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 24px;
-      height: 24px;
-      border-radius: 999px;
-      font-weight: 700;
-      font-size: 12px;
-      background: #f1f5f9;
-      color: var(--text);
-    }
-    .rank-1 { background: #fee2e2; color: #991b1b; }
-    .rank-2 { background: #dbeafe; color: #1d4ed8; }
-    .rank-3 { background: #fef3c7; color: #b45309; }
-    .top-score {
-      background: var(--primary-soft);
-      color: var(--primary);
-      font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      white-space: nowrap;
-    }
-
-    .charts-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-      margin-bottom: 16px;
-    }
-    @media (max-width: 850px) {
-      .charts-grid { grid-template-columns: minmax(0, 1fr); }
-    }
-    .panel {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px 20px;
-      margin-bottom: 16px;
-    }
-    .panel-title { font-size: 15px; font-weight: 700; }
-    .chart-box { position: relative; height: 240px; width: 100%; margin-top: 12px; }
-
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    input[type="text"], select {
-      border: 1px solid var(--border);
+      padding: 10px 20px;
       border-radius: 8px;
-      padding: 8px 12px;
-      font-size: 13px;
-      background: #fff;
-      color: var(--text);
+      font-size: 16px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(127, 20, 20, 0.25);
+      transition: all 0.2s ease;
+      border: 1px solid #7f1414;
     }
-    .table-wrap { overflow-x: auto; max-height: 620px; overflow-y: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th, td { padding: 9px 11px; border-bottom: 1px solid var(--border); text-align: left; }
-    th { background: #f1f5f9; font-weight: 700; position: sticky; top: 0; z-index: 1; }
-    th.center, td.center { text-align: center; }
-    tr:hover td { background: #fafafa; }
-    .pill-cat {
-      background: #eff6ff;
-      color: var(--accent);
-      padding: 3px 8px;
-      border-radius: 5px;
+
+    .btn-input:hover {
+      background: linear-gradient(180deg, #b91c1c 0%, #991b1b 100%);
+      transform: translateY(-1px);
+    }
+
+    .stats-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 8px 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+
+    .stat-label {
       font-size: 11px;
       font-weight: 700;
-      white-space: nowrap;
+      color: var(--text-dark);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
-    .check-yes { color: #16a34a; font-weight: 700; font-size: 15px; }
-    .check-no { color: #cbd5e1; font-size: 14px; }
-    .score-pill {
-      display: inline-block;
-      min-width: 26px;
-      text-align: center;
-      padding: 3px 8px;
-      border-radius: 999px;
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .category-section {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+
+    .section-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .section-title {
+      font-size: 16px;
       font-weight: 700;
-      background: #f1f5f9;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .score-high { background: #dcfce7; color: #166534; }
-    .footer-row td { background: #fef2f2; font-weight: 700; color: var(--primary); position: sticky; bottom: 0; }
-    .error-banner {
-      display: none;
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      color: #991b1b;
-      padding: 12px 14px;
-      border-radius: 8px;
-      margin-bottom: 12px;
+
+    .badge-kategori {
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      padding: 3px 12px;
+      border-radius: 6px;
       font-size: 13px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .table-label-right {
+      font-size: 13px;
+      font-weight: 800;
+      color: #1f2937;
+      letter-spacing: 0.5px;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid #f1f5f9;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1120px;
+    }
+
+    thead th {
+      padding: 12px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: left;
+    }
+
+    th.th-left {
+      background-color: #fdf2f2;
+      color: #991b1b;
+      border-bottom: 1px solid #fee2e2;
+    }
+
+    th.th-rank {
+      width: 85px;
+      text-align: center;
+    }
+
+    th.th-instansi {
+      width: 220px;
+    }
+
+    th.th-score {
+      background-color: var(--primary-red);
+      color: #ffffff;
+      text-align: center;
+      min-width: 115px;
+      max-width: 155px;
+      white-space: normal;
+      line-height: 1.25;
+      border-right: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    th.th-total {
+      background-color: var(--dark-red);
+      color: #ffffff;
+      text-align: center;
+      width: 85px;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #f1f5f9;
+      transition: background 0.15s;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    tbody tr:hover {
+      background-color: #fef2f2;
+    }
+
+    tbody td {
+      padding: 13px 12px;
+      font-size: 13.5px;
+      vertical-align: middle;
+    }
+
+    td.td-rank {
+      text-align: center;
+    }
+
+    .rank-circle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 800;
+      background-color: #f1f5f9;
+      color: #475569;
+    }
+
+    .rank-1 { background-color: #fee2e2; color: #b91c1c; }
+    .rank-2 { background-color: #dbeafe; color: #1d4ed8; }
+    .rank-3 { background-color: #fef3c7; color: #b45309; }
+
+    .inovasi-name {
+      font-weight: 700;
+      color: #111827;
+      line-height: 1.4;
+    }
+
+    .tipe-pill {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 6px;
+      background: #e2e8f0;
+      color: #334155;
+      vertical-align: middle;
+    }
+
+    .instansi-name {
+      font-weight: 600;
+      color: #374151;
+      font-size: 12.5px;
+      text-transform: uppercase;
+    }
+
+    td.td-score {
+      text-align: center;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    td.td-total {
+      text-align: center;
+      font-weight: 800;
+      font-size: 14px;
+      color: var(--primary-red);
+      background-color: rgba(254, 226, 226, 0.25);
+    }
+
+    .loading-state {
+      text-align: center;
+      padding: 50px;
+      color: var(--text-muted);
+      font-weight: 600;
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div>
-      <h1>Dashboard Rekapitulasi Festival Inovasi</h1>
-      <p id="lastUpdateText">Menghubungkan ke 4 sheet di Google Sheets...</p>
-    </div>
-    <div class="status-box">
-      <span class="badge" id="statusBadge">Memuat data...</span>
-      <button class="btn-refresh" type="button" onclick="loadLiveData()">↻ Refresh Sekarang</button>
-    </div>
-  </div>
+  <div class="container">
+    <div class="header-banner">
+      <div class="header-left">
+        <div class="logo-box">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/f/fe/Lambang_Kota_Pekalongan.png?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=original" alt="Logo">
+        </div>
+        <div class="header-title">
+          <h1>Dashboard Rekapitulasi Penilaian Festival Inovasi</h1>
+          <p id="lastUpdated">Pembaruan terakhir : Memuat data...</p>
+        </div>
+      </div>
 
-  <div class="top-action-bar">
-    <div class="sheet-tabs" id="sheetTabs">
-      <button class="tab-btn active" data-sheet="IDE OPD" onclick="selectSheet('IDE OPD')">IDE OPD</button>
-      <button class="tab-btn" data-sheet="AKTIF OPD" onclick="selectSheet('AKTIF OPD')">AKTIF OPD</button>
-      <button class="tab-btn" data-sheet="IDE UNIT" onclick="selectSheet('IDE UNIT')">IDE UNIT</button>
-      <button class="tab-btn" data-sheet="AKTIF UNIT" onclick="selectSheet('AKTIF UNIT')">AKTIF UNIT</button>
-      <button class="tab-btn" data-sheet="SEMUA" onclick="selectSheet('SEMUA')">Semua Sheet</button>
+      <div class="header-right">
+        <div class="status-pill">
+          <span class="status-dot" id="statusDot"></span>
+          <span id="statusText">Terhubung</span>
+        </div>
+        <button class="btn-refresh" id="btnRefresh" onclick="loadData()">
+          ↻ Refresh Sekarang
+        </button>
+      </div>
     </div>
-    <a href="https://doclitbangkotapkl-ui.github.io/inputnilaifestivalinovasi/" target="_blank" rel="noopener noreferrer" class="btn-halaman-input">
-      Halaman input
-    </a>
-  </div>
 
-  <div class="error-banner" id="errorBanner"></div>
+    <div class="controls-bar">
+      <div class="tab-group">
+        <button class="tab-btn active" onclick="setTab('IDE', this)">IDE</button>
+        <button class="tab-btn" onclick="setTab('AKTIF', this)">AKTIF</button>
+        <button class="tab-btn" onclick="setTab('SEMUA', this)">SEMUA</button>
+      </div>
 
-  <div class="kpi-grid">
-    <div class="kpi-card">
-      <div class="kpi-label">Total Inovasi</div>
-      <div class="kpi-value" id="kpiTotalInovasi">-</div>
-      <div class="kpi-sub" id="kpiSheetLabel">Sheet: IDE OPD</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Total Suara Masuk</div>
-      <div class="kpi-value" id="kpiTotalSuara">-</div>
-      <div class="kpi-sub">Akumulasi seluruh penilai</div>
-    </div>
-  </div>
+      <div class="right-controls">
+        <!-- Ganti tanda # dengan URL halaman input Anda -->
+        <a href="#" class="btn-input">Halaman input</a>
 
-  <div class="panel top5-panel">
-    <div class="top5-header">
-      <div class="panel-title" id="top5Title">5 Inovasi dengan Suara Tertinggi — IDE OPD</div>
-      <div class="top5-subtitle">Diurutkan berdasarkan perolehan suara terbanyak</div>
+        <div class="stats-group">
+          <div class="stat-card">
+            <span class="stat-label">TOTAL INOVASI</span>
+            <span class="stat-value" id="statInovasi">0</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">TOTAL SUARA MASUK</span>
+            <span class="stat-value" id="statSuara">0</span>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="table-wrap" style="max-height: none;">
-      <table class="top5-table">
-        <thead>
-          <tr>
-            <th class="center" style="width: 70px;">Peringkat</th>
-            <th>Nama Inovasi</th>
-            <th>OPD / Unit</th>
-            <th class="center">Kategori</th>
-            <th class="center" style="width: 110px;">Total Suara</th>
-          </tr>
-        </thead>
-        <tbody id="top5Body">
-          <tr>
-            <td colspan="5" class="center kpi-sub">Menunggu data...</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
 
-  <div class="charts-grid">
-    <div class="panel">
-      <div class="panel-title">Perolehan Suara per Inovasi</div>
-      <div class="chart-box"><canvas id="chartInovasi"></canvas></div>
-    </div>
-    <div class="panel">
-      <div class="panel-title">Jumlah Inovasi Dipilih per Penilai</div>
-      <div class="chart-box"><canvas id="chartPenilai"></canvas></div>
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="panel-title" id="tablePanelTitle">Tabel Rekapan — IDE OPD</div>
-    <div class="toolbar" style="margin-top: 12px;">
-      <input type="text" id="searchInput" placeholder="Cari nama inovasi, OPD/unit, atau pemilih..." style="min-width: 260px; flex: 1;" />
-      <select id="sortSelect">
-        <option value="default">Urutan Sesuai Spreadsheet</option>
-        <option value="suara_desc">Suara Tertinggi ke Terendah</option>
-        <option value="nama_asc">Nama Inovasi (A-Z)</option>
-        <option value="opd_asc">OPD / Unit (A-Z)</option>
-      </select>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>No</th>
-            <th>Nama Inovasi</th>
-            <th>OPD / Unit</th>
-            <th class="center">Kategori</th>
-            <th class="center">Kusuma</th>
-            <th class="center">Ahmad</th>
-            <th class="center">Junaenah</th>
-            <th class="center">Fahrus</th>
-            <th class="center">Ade</th>
-            <th class="center">Dwi</th>
-            <th class="center">Sevina</th>
-            <th class="center">Total</th>
-            <th>Pemilih</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-        <tfoot>
-          <tr class="footer-row" id="footerRow"></tr>
-        </tfoot>
-      </table>
+    <div id="contentArea">
+      <div class="loading-state">Memuat data rekapitulasi penilaian...</div>
     </div>
   </div>
 
   <script>
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxQrqgsaszA_5NQKwLEYetOiexlxrZCmZ6A0AHpLbcNN34Wb6GyVRCR1TFmd2bgTHTD/exec";
-    const SHEET_ORDER = ["IDE OPD", "AKTIF OPD", "IDE UNIT", "AKTIF UNIT"];
+    // GANTI URL DI BAWAH DENGAN URL WEB APP APPS SCRIPT ANDA (/exec)
+    const API_URL = 'https://script.google.com/macros/s/AKfycbykT0pWKPwXWjKMOXNEjYA-67cVdlLjOjO-RcrSbChkyXqvA6W9PrAn-RTrsaH1riXm/exec';
 
-    let activeSheet = "IDE OPD";
-    let allSheetsData = {};
-    let reviewers = [
-      "Dr. Kusuma Adi Achmad, ST.,MT",
-      "Ahmad Ilyas",
-      "Junaenah, S.AP., M.M",
-      "Fahrus Salis",
-      "Ade Asep Syarifudin",
-      "Dwi Agustina, S.Pd.,M.Pd.B.I., PhD",
-      "Sevina Mahardini, ST.,MT.,M.Sc"
-    ];
-    let rows = [];
-    let chartInovasi, chartPenilai;
+    const DEFAULT_JURI_NAMES = ['JURI 1', 'JURI 2', 'JURI 3', 'JURI 4', 'JURI 5', 'JURI 6', 'JURI 7'];
+    let rawData = { ide: [], aktif: [], juriNames: DEFAULT_JURI_NAMES };
+    let currentTab = 'IDE';
+    const URUTAN_KATEGORI = ['SEKOLAH', 'OPD', 'UNIT'];
 
-    function getTotalSuara(item) {
-      return item.votes.reduce((a, b) => a + b, 0);
-    }
-
-    function getPemilih(item) {
-      const names = reviewers.filter((_, idx) => item.votes[idx] === 1);
-      return names.length ? names.join(", ") : "-";
-    }
-
-    function buildActiveView() {
-      if (activeSheet === "SEMUA") {
-        let combined = [];
-        SHEET_ORDER.forEach(name => {
-          const s = allSheetsData[name];
-          if (s && Array.isArray(s.rows)) {
-            if (s.reviewers && s.reviewers.length === 7 && s.reviewers.some(Boolean)) {
-              reviewers = s.reviewers;
-            }
-            s.rows.forEach(r => combined.push({ ...r, kat: r.kat || name }));
-          }
-        });
-        rows = combined;
-      } else {
-        const s = allSheetsData[activeSheet] || { rows: [], reviewers: reviewers };
-        if (s.reviewers && s.reviewers.length === 7 && s.reviewers.some(Boolean)) {
-          reviewers = s.reviewers;
-        }
-        rows = Array.isArray(s.rows) ? s.rows : [];
-      }
-
-      document.getElementById("kpiSheetLabel").textContent = `Sheet: ${activeSheet}`;
-      document.getElementById("top5Title").textContent = `5 Inovasi dengan Suara Tertinggi — ${activeSheet}`;
-      document.getElementById("tablePanelTitle").textContent = `Tabel Rekapan — ${activeSheet}`;
-      renderTable();
-    }
-
-    window.selectSheet = function(sheetName) {
-      activeSheet = sheetName;
-      document.querySelectorAll("#sheetTabs .tab-btn").forEach(btn => {
-        btn.classList.toggle("active", btn.getAttribute("data-sheet") === sheetName);
-      });
-      buildActiveView();
+    window.onload = function() {
+      loadData();
+      setInterval(loadData, 60000);
     };
 
-    function updateKPIs() {
-      const totalSuara = rows.reduce((sum, r) => sum + getTotalSuara(r), 0);
+    async function loadData() {
+      const btn = document.getElementById('btnRefresh');
+      const statusText = document.getElementById('statusText');
+      btn.disabled = true;
+      statusText.textContent = 'Memperbarui...';
 
-      const top5 = [...rows]
-        .map(r => ({
-          nama: r.nama,
-          opd: r.opd || "-",
-          kat: r.kat || activeSheet,
-          suara: getTotalSuara(r)
-        }))
-        .filter(item => item.suara > 0)
-        .sort((a, b) => b.suara - a.suara || a.nama.localeCompare(b.nama, "id"))
-        .slice(0, 5);
+      try {
+        const response = await fetch(API_URL, { cache: 'no-store' });
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const res = await response.json();
 
-      document.getElementById("kpiTotalInovasi").textContent = rows.length;
-      document.getElementById("kpiTotalSuara").textContent = totalSuara;
+        if (res.success) {
+          rawData.ide = res.ide || [];
+          rawData.aktif = res.aktif || [];
+          rawData.juriNames = (Array.isArray(res.juriNames) && res.juriNames.length === 7)
+            ? res.juriNames
+            : DEFAULT_JURI_NAMES;
 
-      const top5Body = document.getElementById("top5Body");
-      if (top5.length > 0) {
-        top5Body.innerHTML = top5.map((item, idx) => {
-          const rankClass = idx === 0 ? "rank-1" : idx === 1 ? "rank-2" : idx === 2 ? "rank-3" : "";
-          return `
-            <tr>
-              <td class="center"><span class="rank-badge ${rankClass}">${idx + 1}</span></td>
-              <td><strong>${item.nama}</strong></td>
-              <td>${item.opd}</td>
-              <td class="center"><span class="pill-cat">${item.kat}</span></td>
-              <td class="center"><span class="top-score">${item.suara} suara</span></td>
-            </tr>
-          `;
-        }).join("");
+          document.getElementById('lastUpdated').textContent = 'Pembaruan terakhir : ' + res.lastUpdated;
+          statusText.textContent = 'Terhubung';
+          document.getElementById('statusDot').style.backgroundColor = '#4ade80';
+          renderDashboard();
+        } else {
+          throw new Error(res.error || 'Respons tidak valid');
+        }
+      } catch (err) {
+        statusText.textContent = 'Gagal Memuat';
+        document.getElementById('statusDot').style.backgroundColor = '#f87171';
+        document.getElementById('contentArea').innerHTML =
+          '<div class="loading-state">Gagal memuat data: ' + escapeHtml(err.message) + '</div>';
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function setTab(tabName, btnElement) {
+      currentTab = tabName;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btnElement.classList.add('active');
+      renderDashboard();
+    }
+
+    function renderDashboard() {
+      let activeList = [];
+      if (currentTab === 'IDE') {
+        activeList = [...rawData.ide];
+      } else if (currentTab === 'AKTIF') {
+        activeList = [...rawData.aktif];
       } else {
-        top5Body.innerHTML = `<tr><td colspan="5" class="center kpi-sub">Belum ada suara masuk</td></tr>`;
+        activeList = [...rawData.ide, ...rawData.aktif];
       }
 
-      document.getElementById("statusBadge").textContent = `● Live • ${activeSheet} (${rows.length})`;
-    }
+      document.getElementById('statInovasi').textContent = activeList.length;
+      const totalSuara = activeList.reduce((acc, item) => acc + item.suaraMasuk, 0);
+      document.getElementById('statSuara').textContent = totalSuara;
 
-    function renderCharts() {
-      const labels = rows.map(r => r.nama.length > 22 ? r.nama.slice(0, 22) + "…" : r.nama);
-      const suaraData = rows.map(r => getTotalSuara(r));
-      const shortNames = reviewers.map(name => name.replace(/^Dr\.\s*/i, "").split(" ")[0]);
-      const penilaiCounts = reviewers.map((_, idx) =>
-        rows.reduce((sum, r) => sum + (r.votes[idx] ? 1 : 0), 0)
-      );
-
-      if (chartInovasi) chartInovasi.destroy();
-      chartInovasi = new Chart(document.getElementById("chartInovasi"), {
-        type: "bar",
-        data: {
-          labels,
-          datasets: [{
-            label: "Total Suara",
-            data: suaraData,
-            backgroundColor: "#b91c1c",
-            borderRadius: 4
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          animation: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { ticks: { font: { size: 10 }, maxRotation: 45, minRotation: 30 } },
-            y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } }
-          }
-        }
-      });
-
-      if (chartPenilai) chartPenilai.destroy();
-      chartPenilai = new Chart(document.getElementById("chartPenilai"), {
-        type: "bar",
-        data: {
-          labels: shortNames,
-          datasets: [{
-            label: "Inovasi Dipilih",
-            data: penilaiCounts,
-            backgroundColor: "#2563eb",
-            borderRadius: 4
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          animation: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { ticks: { font: { size: 11 } } },
-            y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } }
-          }
-        }
-      });
-    }
-
-    function renderTable() {
-      const q = document.getElementById("searchInput").value.toLowerCase().trim();
-      const sortBy = document.getElementById("sortSelect").value;
-
-      let filtered = rows.filter(item => {
-        const pemilihStr = getPemilih(item).toLowerCase();
-        return (
-          item.nama.toLowerCase().includes(q) ||
-          item.opd.toLowerCase().includes(q) ||
-          item.kat.toLowerCase().includes(q) ||
-          pemilihStr.includes(q)
-        );
-      });
-
-      if (sortBy === "suara_desc") {
-        filtered.sort((a, b) => getTotalSuara(b) - getTotalSuara(a));
-      } else if (sortBy === "nama_asc") {
-        filtered.sort((a, b) => a.nama.localeCompare(b.nama, "id"));
-      } else if (sortBy === "opd_asc") {
-        filtered.sort((a, b) => a.opd.localeCompare(b.opd, "id"));
-      }
-
-      const tbody = document.getElementById("tableBody");
-      tbody.innerHTML = "";
-
-      filtered.forEach((item, idx) => {
-        const total = getTotalSuara(item);
-        const tr = document.createElement("tr");
-        const checksHtml = item.votes.map(v => `
-          <td class="center">
-            ${v ? '<span class="check-yes">✔</span>' : '<span class="check-no">☐</span>'}
-          </td>
-        `).join("");
-
-        tr.innerHTML = `
-          <td>${idx + 1}</td>
-          <td><strong>${item.nama}</strong></td>
-          <td>${item.opd}</td>
-          <td class="center"><span class="pill-cat">${item.kat}</span></td>
-          ${checksHtml}
-          <td class="center"><span class="score-pill ${total >= 3 ? "score-high" : ""}">${total}</span></td>
-          <td>${getPemilih(item)}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      const perReviewerTotals = reviewers.map((_, rIdx) =>
-        rows.reduce((sum, r) => sum + (r.votes[rIdx] ? 1 : 0), 0)
-      );
-      const grandTotal = rows.reduce((sum, r) => sum + getTotalSuara(r), 0);
-
-      document.getElementById("footerRow").innerHTML = `
-        <td colspan="4">TOTAL INOVASI YANG DIPILIH</td>
-        ${perReviewerTotals.map(t => `<td class="center">${t}</td>`).join("")}
-        <td class="center">${grandTotal}</td>
-        <td>-</td>
-      `;
-
-      updateKPIs();
-      renderCharts();
-    }
-
-    async function loadLiveData() {
-      const errBox = document.getElementById("errorBanner");
-      if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("TEMPEL_URL")) {
-        errBox.style.display = "block";
-        errBox.textContent = "URL Apps Script belum diisi. Ganti tulisan TEMPEL_URL_WEB_APP_ANDA_DI_SINI dengan URL /exec dari Apps Script.";
+      const contentArea = document.getElementById('contentArea');
+      if (activeList.length === 0) {
+        contentArea.innerHTML = '<div class="loading-state">Belum ada data pada kategori ini.</div>';
         return;
       }
 
-      try {
-        document.getElementById("statusBadge").textContent = "Menyinkronkan...";
-        const res = await fetch(APPS_SCRIPT_URL);
-        const json = await res.json();
+      const headersHtml = rawData.juriNames
+        .map(nama => `<th class="th-score">${escapeHtml(nama)}</th>`)
+        .join('');
 
-        if (json.error) {
-          throw new Error(json.error);
-        }
+      let html = '';
 
-        errBox.style.display = "none";
-        allSheetsData = json.sheets || {};
-        document.getElementById("lastUpdateText").textContent =
-          `Terhubung ke 4 Sheet Google Sheets • Pembaruan terakhir: ${json.updatedAt || "-"} (Auto-refresh 15 detik)`;
-        buildActiveView();
-      } catch (err) {
-        errBox.style.display = "block";
-        errBox.textContent = "Gagal mengambil data dari Google Sheets: " + err.message;
-        document.getElementById("statusBadge").textContent = "⚠ Gagal Terhubung";
-      }
-    }
+      URUTAN_KATEGORI.forEach(kategori => {
+        const items = activeList
+          .filter(item => item.kategori === kategori)
+          .sort((a, b) => b.total - a.total);
 
-    document.getElementById("searchInput").addEventListener("input", renderTable);
-    document.getElementById("sortSelect").addEventListener("change", renderTable);
+        if (items.length === 0) return;
 
-    loadLiveData();
-    setInterval(loadLiveData, 15000);
-  </script>
-</body>
-</html>
+        html += `
+          <div class="category-section">
+            <div class="section-header-row">
+              <div class="section-title">
+                <span>${items.length} Inovasi dengan Suara Tertinggi —</span>
+                <span class="badge-kategori">${kategori}</span>
+              </div>
+              <div class="table-label-right">TABEL NILAI</div>
+            </div>
+
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th class="th-left th-rank">Peringkat</th>
+                    <th class="th-left">Nama Inovasi</th>
+                    <th class="th-left th-instansi">OPD / Unit</th>
+                    ${headersHtml}
+                    <th class="th-total">TOTAL</th>
+                  </tr>
+                </thead>
+                <tbody>
+        `;
+
+        items.forEach((item, idx) => {
+          const rankNum = idx + 1;
+          const rankClass = rankNum <= 3 ? `rank-${rankNum}` : '';
+          const tipeBadge = currentTab === 'SEMUA'
+            ? `<span class="tipe-pill">${item.tipe}</span>`
+            : '';
+
+          html += `
+            <tr>
+              <td class="td-rank">
+                <span class="rank-circle ${rankClass}">${rankNum}</span>
+              </td>
+              <td>
+                <div class="inovasi-name">${escapeHtml(item.namaInovasi)}${tipeBadge}</div>
+              </td>
+              <td>
+                <div class="instansi-name">${escapeHtml(item.instansi)}</div>
+              </td>
+              <td class="td-score">${item.juri[0]}</td>
+              <td class="td-score">${item.juri[1]}</td>
+              <td class="td-score">${item.juri[2]}</td>
+              <td class="td-score">${item.juri[3]}</td>
+              <td class="td-score">${item.juri[4]}
