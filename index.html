@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>Dashboard Rekapitulasi Penilaian Festival Inovasi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     :root {
       --primary-red: #9e1b1b;
       --dark-red: #7f1414;
-      --light-red-bg: #fdf2f2;
       --border-color: #e5e7eb;
       --text-dark: #1f2937;
       --text-muted: #6b7280;
@@ -31,7 +31,6 @@
       margin: 0 auto;
     }
 
-    /* HEADER BANNER */
     .header-banner {
       background: linear-gradient(90deg, #991b1b 0%, #b91c1c 100%);
       color: #ffffff;
@@ -73,7 +72,6 @@
     .header-title h1 {
       font-size: 20px;
       font-weight: 700;
-      letter-spacing: 0.2px;
       margin-bottom: 4px;
     }
 
@@ -131,7 +129,6 @@
       cursor: not-allowed;
     }
 
-    /* FILTER & STATS BAR */
     .controls-bar {
       display: flex;
       justify-content: space-between;
@@ -196,7 +193,6 @@
       color: #111827;
     }
 
-    /* CATEGORY SECTION */
     .category-section {
       background: #ffffff;
       border: 1px solid var(--border-color);
@@ -241,7 +237,6 @@
       letter-spacing: 0.5px;
     }
 
-    /* TABLE STYLING */
     .table-wrapper {
       overflow-x: auto;
       border-radius: 8px;
@@ -261,7 +256,6 @@
       text-align: left;
     }
 
-    /* Header kiri (Pink lembut sesuai gambar) */
     th.th-left {
       background-color: #fdf2f2;
       color: #991b1b;
@@ -277,7 +271,6 @@
       width: 240px;
     }
 
-    /* Header kanan TABEL NILAI (Merah Marun solid sesuai gambar) */
     th.th-score {
       background-color: var(--primary-red);
       color: #ffffff;
@@ -381,11 +374,9 @@
 </head>
 <body>
   <div class="container">
-    <!-- HEADER -->
     <div class="header-banner">
       <div class="header-left">
         <div class="logo-box">
-          <!-- Ganti src di bawah dengan URL logo Kota Pekalongan jika diperlukan -->
           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Lambang_Kota_Pekalongan.png/240px-Lambang_Kota_Pekalongan.png" alt="Logo">
         </div>
         <div class="header-title">
@@ -405,7 +396,6 @@
       </div>
     </div>
 
-    <!-- FILTER & STATS -->
     <div class="controls-bar">
       <div class="tab-group">
         <button class="tab-btn active" onclick="setTab('IDE', this)">IDE</button>
@@ -425,56 +415,53 @@
       </div>
     </div>
 
-    <!-- CONTAINER LIST KATEGORI (URUTAN: SEKOLAH -> OPD -> UNIT) -->
     <div id="contentArea">
       <div class="loading-state">Memuat data rekapitulasi penilaian...</div>
     </div>
   </div>
 
   <script>
+    // GANTI URL DI BAWAH DENGAN URL WEB APP APPS SCRIPT ANDA (/exec)
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzGAYQ7jMEs2pvm1b6oZXXIIAXDCTYgXwrT6t96A9Ubfst0j6G1lyWOuhhI-NFAj6Yn/exec';
+
     let rawData = { ide: [], aktif: [] };
     let currentTab = 'IDE';
-
-    // Urutan kategori wajib: SEKOLAH dulu, lalu OPD, lalu UNIT
     const URUTAN_KATEGORI = ['SEKOLAH', 'OPD', 'UNIT'];
 
     window.onload = function() {
       loadData();
-      // Auto-refresh setiap 60 detik
       setInterval(loadData, 60000);
     };
 
-    function loadData() {
+    async function loadData() {
       const btn = document.getElementById('btnRefresh');
       const statusText = document.getElementById('statusText');
       btn.disabled = true;
       statusText.textContent = 'Memperbarui...';
 
-      google.script.run
-        .withSuccessHandler(function(res) {
-          btn.disabled = false;
-          if (res.success) {
-            rawData.ide = res.ide || [];
-            rawData.aktif = res.aktif || [];
-            document.getElementById('lastUpdated').textContent = 'Pembaruan terakhir : ' + res.lastUpdated;
-            statusText.textContent = 'Terhubung';
-            document.getElementById('statusDot').style.backgroundColor = '#4ade80';
-            renderDashboard();
-          } else {
-            statusText.textContent = 'Gagal Memuat';
-            document.getElementById('statusDot').style.backgroundColor = '#f87171';
-            document.getElementById('contentArea').innerHTML =
-              '<div class="loading-state">Error: ' + res.error + '</div>';
-          }
-        })
-        .withFailureHandler(function(err) {
-          btn.disabled = false;
-          statusText.textContent = 'Terputus';
-          document.getElementById('statusDot').style.backgroundColor = '#f87171';
-          document.getElementById('contentArea').innerHTML =
-            '<div class="loading-state">Gagal terhubung ke server: ' + err.message + '</div>';
-        })
-        .getDashboardData();
+      try {
+        const response = await fetch(API_URL, { cache: 'no-store' });
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const res = await response.json();
+
+        if (res.success) {
+          rawData.ide = res.ide || [];
+          rawData.aktif = res.aktif || [];
+          document.getElementById('lastUpdated').textContent = 'Pembaruan terakhir : ' + res.lastUpdated;
+          statusText.textContent = 'Terhubung';
+          document.getElementById('statusDot').style.backgroundColor = '#4ade80';
+          renderDashboard();
+        } else {
+          throw new Error(res.error || 'Respons tidak valid');
+        }
+      } catch (err) {
+        statusText.textContent = 'Gagal Memuat';
+        document.getElementById('statusDot').style.backgroundColor = '#f87171';
+        document.getElementById('contentArea').innerHTML =
+          '<div class="loading-state">Gagal memuat data: ' + escapeHtml(err.message) + '</div>';
+      } finally {
+        btn.disabled = false;
+      }
     }
 
     function setTab(tabName, btnElement) {
@@ -494,7 +481,6 @@
         activeList = [...rawData.ide, ...rawData.aktif];
       }
 
-      // Update Statistik
       document.getElementById('statInovasi').textContent = activeList.length;
       const totalSuara = activeList.reduce((acc, item) => acc + item.suaraMasuk, 0);
       document.getElementById('statSuara').textContent = totalSuara;
@@ -507,11 +493,10 @@
 
       let html = '';
 
-      // Render berurutan sesuai permintaan: SEKOLAH -> OPD -> UNIT
       URUTAN_KATEGORI.forEach(kategori => {
         const items = activeList
           .filter(item => item.kategori === kategori)
-          .sort((a, b) => b.total - a.total); // Urutkan dari Total Nilai tertinggi
+          .sort((a, b) => b.total - a.total);
 
         if (items.length === 0) return;
 
