@@ -52,11 +52,18 @@
     }
     .btn-refresh:hover { background: #fee2e2; }
 
+    .top-action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
     .sheet-tabs {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-bottom: 16px;
     }
     .tab-btn {
       border: 1px solid var(--border);
@@ -74,6 +81,23 @@
       color: #ffffff;
       border-color: #991b1b;
     }
+    .btn-halaman-input {
+      background: #991b1b;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .btn-halaman-input:hover {
+      background: #7f1d1d;
+    }
 
     .kpi-grid {
       display: grid;
@@ -89,32 +113,6 @@
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 16px 18px;
-    }
-    .kpi-card-flex {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .btn-input-inovasi {
-      background: linear-gradient(135deg, #991b1b, #dc2626);
-      color: #ffffff;
-      text-decoration: none;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 2px 6px rgba(153, 27, 27, 0.25);
-      transition: background 0.2s, transform 0.1s;
-      white-space: nowrap;
-    }
-    .btn-input-inovasi:hover {
-      background: linear-gradient(135deg, #7f1d1d, #b91c1c);
-      transform: translateY(-1px);
     }
     .kpi-label { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; }
     .kpi-value { font-size: 26px; font-weight: 700; margin-top: 4px; color: var(--text); }
@@ -267,26 +265,26 @@
     </div>
   </div>
 
-  <div class="sheet-tabs" id="sheetTabs">
-    <button class="tab-btn active" data-sheet="IDE OPD" onclick="selectSheet('IDE OPD')">IDE OPD</button>
-    <button class="tab-btn" data-sheet="AKTIF OPD" onclick="selectSheet('AKTIF OPD')">AKTIF OPD</button>
-    <button class="tab-btn" data-sheet="IDE UNIT" onclick="selectSheet('IDE UNIT')">IDE UNIT</button>
-    <button class="tab-btn" data-sheet="AKTIF UNIT" onclick="selectSheet('AKTIF UNIT')">AKTIF UNIT</button>
-    <button class="tab-btn" data-sheet="SEMUA" onclick="selectSheet('SEMUA')">Semua Sheet</button>
+  <div class="top-action-bar">
+    <div class="sheet-tabs" id="sheetTabs">
+      <button class="tab-btn active" data-sheet="IDE OPD" onclick="selectSheet('IDE OPD')">IDE OPD</button>
+      <button class="tab-btn" data-sheet="AKTIF OPD" onclick="selectSheet('AKTIF OPD')">AKTIF OPD</button>
+      <button class="tab-btn" data-sheet="IDE UNIT" onclick="selectSheet('IDE UNIT')">IDE UNIT</button>
+      <button class="tab-btn" data-sheet="AKTIF UNIT" onclick="selectSheet('AKTIF UNIT')">AKTIF UNIT</button>
+      <button class="tab-btn" data-sheet="SEMUA" onclick="selectSheet('SEMUA')">Semua Sheet</button>
+    </div>
+    <a href="https://doclitbangkotapkl-ui.github.io/inputnilaifestivalinovasi/" target="_blank" rel="noopener noreferrer" class="btn-halaman-input">
+      Halaman input
+    </a>
   </div>
 
   <div class="error-banner" id="errorBanner"></div>
 
   <div class="kpi-grid">
-    <div class="kpi-card kpi-card-flex">
-      <div>
-        <div class="kpi-label">Total Inovasi</div>
-        <div class="kpi-value" id="kpiTotalInovasi">-</div>
-        <div class="kpi-sub" id="kpiSheetLabel">Sheet: IDE OPD</div>
-      </div>
-      <a href="https://doclitbangkotapkl-ui.github.io/inputnilaifestivalinovasi/" target="_blank" rel="noopener noreferrer" class="btn-input-inovasi">
-        + Input Nilai Inovasi
-      </a>
+    <div class="kpi-card">
+      <div class="kpi-label">Total Inovasi</div>
+      <div class="kpi-value" id="kpiTotalInovasi">-</div>
+      <div class="kpi-sub" id="kpiSheetLabel">Sheet: IDE OPD</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Total Suara Masuk</div>
