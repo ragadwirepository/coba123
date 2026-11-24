@@ -2,15 +2,19 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Dashboard Rekapitulasi Penilaian Festival Inovasi</title>
+  <title>Form Input Penilaian Juri — Festival Inovasi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     :root {
-      --primary-red: #9e1b1b;
-      --dark-red: #7f1414;
-      --border-color: #e5e7eb;
-      --text-dark: #1f2937;
-      --text-muted: #6b7280;
+      --primary: #991b1b;
+      --primary-dark: #7f1414;
+      --green: #0f7629;
+      --green-hover: #0b5d20;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --muted: #64748b;
     }
 
     * {
@@ -21,554 +25,976 @@
     }
 
     body {
-      background-color: #f8fafc;
-      color: var(--text-dark);
-      padding: 20px;
+      background: var(--bg);
+      color: var(--text);
+      padding: 16px 24px;
     }
 
     .container {
-      max-width: 1380px;
+      width: 100%;
+      max-width: 100%;
       margin: 0 auto;
     }
 
-    .header-banner {
+    .header {
       background: linear-gradient(90deg, #991b1b 0%, #b91c1c 100%);
-      color: #ffffff;
+      color: #fff;
+      padding: 18px 26px;
       border-radius: 12px;
-      padding: 20px 28px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 12px rgba(153, 27, 27, 0.2);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 16px;
       flex-wrap: wrap;
-      gap: 16px;
-      box-shadow: 0 4px 12px rgba(153, 27, 27, 0.2);
-      margin-bottom: 20px;
     }
 
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .logo-box {
-      width: 48px;
-      height: 54px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      padding: 4px;
-    }
-
-    .logo-box img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-    }
-
-    .header-title h1 {
+    .header-left h1 {
       font-size: 20px;
       font-weight: 700;
       margin-bottom: 4px;
     }
 
-    .header-title p {
+    .header-left p {
       font-size: 13px;
-      color: #fca5a5;
+      color: #fecaca;
     }
 
-    .header-right {
-      display: flex;
+    .user-box {
+      display: none;
       align-items: center;
       gap: 12px;
     }
 
-    .status-pill {
-      background: rgba(255, 255, 255, 0.18);
-      color: #ffffff;
-      padding: 8px 20px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
+    .user-box.show {
       display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      background-color: #4ade80;
-      border-radius: 50%;
+    .user-meta {
+      text-align: right;
     }
 
-    .btn-refresh {
-      background: #ffffff;
-      color: var(--primary-red);
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
+    .user-meta-label {
       font-size: 13px;
       font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
+      color: #ffffff;
+      margin-bottom: 4px;
     }
 
-    .btn-refresh:hover {
+    .btn-change-user {
+      background: #ffffff;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn-change-user:hover {
       background: #fee2e2;
     }
 
-    .btn-refresh:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-
-    .controls-bar {
+    .user-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      background: #ffffff;
+      border: 2px solid #fecaca;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-bottom: 24px;
+      justify-content: center;
+      flex-shrink: 0;
+      overflow: hidden;
     }
 
-    .tab-group {
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 18px;
+      align-items: start;
+    }
+
+    label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    select, input[type="number"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    select:focus, input[type="number"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(153, 27, 27, 0.12);
+    }
+
+    .tab-row {
       display: flex;
       gap: 8px;
+      margin-top: 14px;
     }
 
     .tab-btn {
-      padding: 10px 26px;
-      border-radius: 6px;
-      border: 1px solid #d1d5db;
-      background: #ffffff;
-      color: var(--text-dark);
-      font-size: 13px;
+      padding: 8px 20px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      border-radius: 8px;
       font-weight: 700;
+      font-size: 12.5px;
       cursor: pointer;
-      transition: all 0.2s;
     }
 
     .tab-btn.active {
-      background: linear-gradient(180deg, #b91c1c 0%, #881313 100%);
-      color: #ffffff;
-      border-color: #881313;
-      box-shadow: 0 2px 6px rgba(153, 27, 27, 0.25);
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
     }
 
-    .stats-group {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .stat-card {
-      background: #ffffff;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      padding: 8px 18px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-    }
-
-    .stat-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-dark);
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
-
-    .stat-value {
-      font-size: 20px;
-      font-weight: 800;
-      color: #111827;
-    }
-
-    .category-section {
-      background: #ffffff;
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 24px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-    }
-
-    .section-header-row {
+    .peserta-info {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
+      gap: 16px;
       flex-wrap: wrap;
-      gap: 10px;
     }
 
-    .section-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: #111827;
+    .peserta-title-line {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .peserta-info h3 {
+      font-size: 15px;
+      color: #7f1414;
+      font-weight: 700;
+    }
+
+    .peserta-info span {
+      font-size: 12.5px;
+      color: #991b1b;
+      font-weight: 600;
+    }
+
+    .badge {
+      background: #fff;
+      border: 1px solid #fca5a5;
+      color: #991b1b;
+      padding: 2px 9px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .btn-save {
+      background: var(--green);
+      color: #fff;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-save:hover {
+      background: var(--green-hover);
+    }
+
+    .btn-save:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .kriteria-wrapper {
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 16px;
+    }
+
+    .kriteria-list {
+      display: grid;
+      gap: 10px;
+      min-width: 960px;
+    }
+
+    .kriteria-list.cols-7 {
+      grid-template-columns: repeat(7, minmax(125px, 1fr));
+    }
+
+    .kriteria-list.cols-6 {
+      grid-template-columns: repeat(6, minmax(140px, 1fr));
+    }
+
+    .kriteria-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      background: #fafafa;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       gap: 10px;
     }
 
-    .badge-kategori {
-      background: #f3f4f6;
-      border: 1px solid #d1d5db;
-      padding: 3px 12px;
+    .kriteria-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .kriteria-nama {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.25;
+    }
+
+    .kriteria-bobot {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 4px 9px;
       border-radius: 6px;
-      font-size: 13px;
-      font-weight: 800;
-      color: #111827;
+      white-space: nowrap;
     }
 
-    .table-label-right {
-      font-size: 13px;
-      font-weight: 800;
-      color: #1f2937;
-      letter-spacing: 0.5px;
+    .kriteria-item input[type="number"] {
+      padding: 8px 10px;
+      font-size: 14px;
+      font-weight: 600;
     }
 
-    .table-wrapper {
-      overflow-x: auto;
+    .footer-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+
+    .total-box {
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .total-box strong {
+      font-size: 22px;
+      color: var(--primary);
+    }
+
+    .unsaved-tag {
+      display: none;
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fcd34d;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+
+    .unsaved-tag.show {
+      display: inline-block;
+    }
+
+    .alert {
+      padding: 11px 16px;
       border-radius: 8px;
-      border: 1px solid #f1f5f9;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 12px;
+      display: none;
     }
 
-    table {
+    .alert.success {
+      display: block;
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac;
+    }
+
+    .alert.error {
+      display: block;
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+
+    .rekap-mini {
       width: 100%;
       border-collapse: collapse;
-      min-width: 980px;
+      margin-top: 10px;
+      font-size: 13px;
     }
 
-    thead th {
-      padding: 12px 14px;
-      font-size: 12px;
-      font-weight: 700;
+    .rekap-mini th {
+      background: #991b1b;
+      color: #fff;
+      padding: 10px 12px;
       text-align: left;
     }
 
-    th.th-left {
-      background-color: #fdf2f2;
+    .rekap-mini td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .rekap-mini tr:hover {
+      background: #fef2f2;
+      cursor: pointer;
+    }
+
+    .red-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 16px;
+    }
+
+    .red-modal-backdrop.show {
+      display: flex;
+    }
+
+    .red-modal-box {
+      background: #b91c1c;
+      color: #ffffff;
+      border: 2px solid #fecaca;
+      border-radius: 14px;
+      max-width: 460px;
+      width: 100%;
+      padding: 24px 26px;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(127, 20, 20, 0.45);
+      animation: modalPop 0.16s ease-out;
+    }
+
+    @keyframes modalPop {
+      from { transform: scale(0.94); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .red-modal-title {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      letter-spacing: 0.3px;
+    }
+
+    .red-modal-msg {
+      font-size: 14px;
+      line-height: 1.45;
+      color: #fef2f2;
+      margin-bottom: 20px;
+    }
+
+    .red-modal-btn {
+      background: #ffffff;
       color: #991b1b;
-      border-bottom: 1px solid #fee2e2;
-    }
-
-    th.th-rank {
-      width: 90px;
-      text-align: center;
-    }
-
-    th.th-instansi {
-      width: 240px;
-    }
-
-    th.th-score {
-      background-color: var(--primary-red);
-      color: #ffffff;
-      text-align: center;
-      width: 68px;
-    }
-
-    th.th-total {
-      background-color: var(--dark-red);
-      color: #ffffff;
-      text-align: center;
-      width: 80px;
-    }
-
-    tbody tr {
-      border-bottom: 1px solid #f1f5f9;
+      border: none;
+      padding: 10px 26px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 800;
+      cursor: pointer;
       transition: background 0.15s;
     }
 
-    tbody tr:nth-child(even) {
-      background-color: #fafafa;
-    }
-
-    tbody tr:hover {
-      background-color: #fef2f2;
-    }
-
-    tbody td {
-      padding: 13px 14px;
-      font-size: 13.5px;
-      vertical-align: middle;
-    }
-
-    td.td-rank {
-      text-align: center;
-    }
-
-    .rank-circle {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      font-size: 12px;
-      font-weight: 800;
-      background-color: #f1f5f9;
-      color: #475569;
-    }
-
-    .rank-1 { background-color: #fee2e2; color: #b91c1c; }
-    .rank-2 { background-color: #dbeafe; color: #1d4ed8; }
-    .rank-3 { background-color: #fef3c7; color: #b45309; }
-
-    .inovasi-name {
-      font-weight: 700;
-      color: #111827;
-      line-height: 1.4;
-    }
-
-    .tipe-pill {
-      display: inline-block;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 4px;
-      margin-left: 6px;
-      background: #e2e8f0;
-      color: #334155;
-      vertical-align: middle;
-    }
-
-    .instansi-name {
-      font-weight: 600;
-      color: #374151;
-      font-size: 12.5px;
-      text-transform: uppercase;
-    }
-
-    td.td-score {
-      text-align: center;
-      font-weight: 600;
-      color: #374151;
-    }
-
-    td.td-total {
-      text-align: center;
-      font-weight: 800;
-      font-size: 14px;
-      color: var(--primary-red);
-      background-color: rgba(254, 226, 226, 0.25);
-    }
-
-    .loading-state {
-      text-align: center;
-      padding: 50px;
-      color: var(--text-muted);
-      font-weight: 600;
+    .red-modal-btn:hover {
+      background: #fee2e2;
     }
   </style>
 </head>
 <body>
+  <div id="redModal" class="red-modal-backdrop" onclick="closeRedModal()">
+    <div class="red-modal-box" onclick="event.stopPropagation()">
+      <div class="red-modal-title">PERHATIAN</div>
+      <div id="redModalMsg" class="red-modal-msg">-</div>
+      <button class="red-modal-btn" onclick="closeRedModal()">Mengerti</button>
+    </div>
+  </div>
+
   <div class="container">
-    <div class="header-banner">
+    <div class="header">
       <div class="header-left">
-        <div class="logo-box">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Lambang_Kota_Pekalongan.png/240px-Lambang_Kota_Pekalongan.png" alt="Logo">
-        </div>
-        <div class="header-title">
-          <h1>Dashboard Rekapitulasi Penilaian Festival Inovasi</h1>
-          <p id="lastUpdated">Pembaruan terakhir : Memuat data...</p>
-        </div>
+        <h1>Form Input Penilaian Juri — Festival Inovasi</h1>
+        <p id="statusMsg">Pilih nama juri untuk memuat daftar peserta dan kolom indikator penilaian (Nilai 1 - 10)</p>
       </div>
 
-      <div class="header-right">
-        <div class="status-pill">
-          <span class="status-dot" id="statusDot"></span>
-          <span id="statusText">Terhubung</span>
+      <div id="userBox" class="user-box">
+        <div class="user-meta">
+          <div class="user-meta-label">Nama user</div>
+          <button type="button" class="btn-change-user" onclick="openJuriSelector()">
+            <span>&#128273;</span>
+            <span>Ubah user</span>
+          </button>
         </div>
-        <button class="btn-refresh" id="btnRefresh" onclick="loadData()">
-          ↻ Refresh Sekarang
-        </button>
-      </div>
-    </div>
-
-    <div class="controls-bar">
-      <div class="tab-group">
-        <button class="tab-btn active" onclick="setTab('IDE', this)">IDE</button>
-        <button class="tab-btn" onclick="setTab('AKTIF', this)">AKTIF</button>
-        <button class="tab-btn" onclick="setTab('SEMUA', this)">SEMUA</button>
-      </div>
-
-      <div class="stats-group">
-        <div class="stat-card">
-          <span class="stat-label">TOTAL INOVASI</span>
-          <span class="stat-value" id="statInovasi">0</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-label">TOTAL SUARA MASUK</span>
-          <span class="stat-value" id="statSuara">0</span>
+        <div class="user-avatar" title="User Juri">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="8" r="4" fill="#1e293b"/>
+            <path d="M4 20c0-3.314 3.582-6 8-6s8 2.686 8 6" fill="#2563eb"/>
+          </svg>
         </div>
       </div>
     </div>
 
-    <div id="contentArea">
-      <div class="loading-state">Memuat data rekapitulasi penilaian...</div>
+    <div id="selectorCard" class="card">
+      <div class="form-grid">
+        <div id="juriSelectorWrap">
+          <label for="selectJuri">Pilih Nama Juri</label>
+          <select id="selectJuri" onchange="onJuriChange()">
+            <option value="">-- Pilih Juri --</option>
+            <option value="1">1. Dr. Kusuma Adi Achmad, ST.,MT (AKTIF)</option>
+            <option value="2">2. Ahmad Ilyas (AKTIF)</option>
+            <option value="3">3. Junaenah, S.AP., M.M (AKTIF)</option>
+            <option value="4">4. Fahrus Salis (IDE)</option>
+            <option value="5">5. Ade Asep Syarifuddin (IDE)</option>
+            <option value="6">6. Dwi Agustina, S.Pd.,M.Pd.B.I.,PhD (IDE)</option>
+            <option value="7">7. Sevina Mahardani, ST.,MT.,M.Sc (AKTIF & IDE)</option>
+          </select>
+        </div>
+
+        <div id="pesertaSelectorWrap" style="display:none;">
+          <label for="selectPeserta">Pilih Peserta / Inovasi (Klik lalu ketik untuk mencari)</label>
+          <select id="selectPeserta" onkeydown="handleDropdownTypeSearch(event)" onchange="onPesertaSelectChange()"></select>
+        </div>
+      </div>
+
+      <div id="tabContainer" class="tab-row" style="display:none;"></div>
+    </div>
+
+    <div id="formCard" class="card" style="display:none;">
+      <div class="peserta-info">
+        <div>
+          <div class="peserta-title-line">
+            <h3 id="infoNamaInovasi">-</h3>
+            <span class="badge" id="infoKategoriBadge">-</span>
+          </div>
+          <span id="infoInstansi">-</span>
+        </div>
+      </div>
+
+      <div class="kriteria-wrapper">
+        <div id="kriteriaContainer" class="kriteria-list"></div>
+      </div>
+
+      <div class="footer-bar">
+        <div class="total-box">
+          <span>Estimasi Total Terbobot (Layar):</span>
+          <strong id="liveTotal">0.00</strong>
+          <span id="unsavedTag" class="unsaved-tag">Belum Disimpan! Klik "Simpan Nilai" dulu</span>
+        </div>
+
+        <button class="btn-save" id="btnSimpan" onclick="submitNilai()">Simpan Nilai</button>
+      </div>
+
+      <div id="alertBox" class="alert"></div>
+    </div>
+
+    <div id="summaryCard" class="card" style="display:none;">
+      <label>Status Input Indikator Anda (Klik baris untuk mengedit nilai)</label>
+      <div style="overflow-x:auto;">
+        <table class="rekap-mini">
+          <thead>
+            <tr>
+              <th style="width:55px;">No</th>
+              <th>Nama Inovasi</th>
+              <th>OPD / Sekolah</th>
+              <th>Kategori</th>
+              <th style="text-align:right;">Indikator Terisi</th>
+            </tr>
+          </thead>
+          <tbody id="summaryBody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <script>
     // GANTI URL DI BAWAH DENGAN URL WEB APP APPS SCRIPT ANDA (/exec)
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzGAYQ7jMEs2pvm1b6oZXXIIAXDCTYgXwrT6t96A9Ubfst0j6G1lyWOuhhI-NFAj6Yn/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxea5it8SLyJd0o6Kt5mTSYv_Lr6EpqE-G0yw3F53Q2IT31zByKzBiUpDEfamMqFk0Anw/exec';
 
-    let rawData = { ide: [], aktif: [] };
-    let currentTab = 'IDE';
-    const URUTAN_KATEGORI = ['SEKOLAH', 'OPD', 'UNIT'];
+    const MIN_NILAI = 1;
+    const MAX_NILAI = 10;
 
-    window.onload = function() {
-      loadData();
-      setInterval(loadData, 60000);
+    const KRITERIA_CONFIG = {
+      aktif: [
+        { nama: 'Kebaharuan', bobot: 20 },
+        { nama: 'Jumlah pengguna', bobot: 10 },
+        { nama: 'Luasan Manfaat', bobot: 10 },
+        { nama: 'Replikatif', bobot: 20 },
+        { nama: 'Kelayakan keberlanjutan', bobot: 15 },
+        { nama: 'Keefektifan', bobot: 15 },
+        { nama: 'Pembebanan penerima manfaat', bobot: 10 }
+      ],
+      ide: [
+        { nama: 'Kebaharuan', bobot: 10 },
+        { nama: 'Kemanfaatan', bobot: 20 },
+        { nama: 'Efektivitas', bobot: 20 },
+        { nama: 'Kemudahan', bobot: 15 },
+        { nama: 'Potensi Keberlanjutan', bobot: 20 },
+        { nama: 'Interkoneksi', bobot: 15 }
+      ]
     };
 
-    async function loadData() {
-      const btn = document.getElementById('btnRefresh');
-      const statusText = document.getElementById('statusText');
-      btn.disabled = true;
-      statusText.textContent = 'Memperbarui...';
+    let currentData = null;
+    let activeTipe = '';
+    let activePesertaIdx = 0;
+    let hasUnsavedChanges = false;
+    let typeBuffer = '';
+    let typeTimer = null;
 
-      try {
-        const response = await fetch(API_URL, { cache: 'no-store' });
-        if (!response.ok) throw new Error('HTTP ' + response.status);
-        const res = await response.json();
+    window.addEventListener('beforeunload', function(e) {
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    });
 
-        if (res.success) {
-          rawData.ide = res.ide || [];
-          rawData.aktif = res.aktif || [];
-          document.getElementById('lastUpdated').textContent = 'Pembaruan terakhir : ' + res.lastUpdated;
-          statusText.textContent = 'Terhubung';
-          document.getElementById('statusDot').style.backgroundColor = '#4ade80';
-          renderDashboard();
-        } else {
-          throw new Error(res.error || 'Respons tidak valid');
-        }
-      } catch (err) {
-        statusText.textContent = 'Gagal Memuat';
-        document.getElementById('statusDot').style.backgroundColor = '#f87171';
-        document.getElementById('contentArea').innerHTML =
-          '<div class="loading-state">Gagal memuat data: ' + escapeHtml(err.message) + '</div>';
-      } finally {
-        btn.disabled = false;
+    function showRedModal(msg) {
+      document.getElementById('redModalMsg').textContent = msg;
+      document.getElementById('redModal').classList.add('show');
+    }
+
+    function closeRedModal() {
+      document.getElementById('redModal').classList.remove('show');
+    }
+
+    function setUnsavedState(dirty) {
+      hasUnsavedChanges = dirty;
+      const tag = document.getElementById('unsavedTag');
+      if (tag) {
+        tag.classList.toggle('show', dirty);
       }
     }
 
-    function setTab(tabName, btnElement) {
-      currentTab = tabName;
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      btnElement.classList.add('active');
-      renderDashboard();
+    function blockIfUnsaved(customMsg) {
+      if (!hasUnsavedChanges) return false;
+      const msg = customMsg || 'Nilai pada inovasi ini belum disimpan! Klik tombol "Simpan Nilai" terlebih dahulu sebelum pindah ke inovasi lain.';
+      showRedModal(msg);
+      return true;
     }
 
-    function renderDashboard() {
-      let activeList = [];
-      if (currentTab === 'IDE') {
-        activeList = [...rawData.ide];
-      } else if (currentTab === 'AKTIF') {
-        activeList = [...rawData.aktif];
-      } else {
-        activeList = [...rawData.ide, ...rawData.aktif];
+    function openJuriSelector() {
+      if (blockIfUnsaved('Nilai inovasi saat ini belum disimpan! Simpan nilai dulu sebelum mengganti user.')) {
+        return;
       }
+      document.getElementById('juriSelectorWrap').style.display = 'block';
+      const sel = document.getElementById('selectJuri');
+      sel.focus();
+    }
 
-      document.getElementById('statInovasi').textContent = activeList.length;
-      const totalSuara = activeList.reduce((acc, item) => acc + item.suaraMasuk, 0);
-      document.getElementById('statSuara').textContent = totalSuara;
+    function formatWaktuBersih(waktuStr) {
+      if (!waktuStr) return '-';
+      const match = String(waktuStr).match(/\b(\d{1,2}:\d{2})\b/g);
+      if (match && match.length >= 2) {
+        return `${match[0]} - ${match[1]}`;
+      }
+      return String(waktuStr);
+    }
 
-      const contentArea = document.getElementById('contentArea');
-      if (activeList.length === 0) {
-        contentArea.innerHTML = '<div class="loading-state">Belum ada data pada kategori ini.</div>';
+    function formatStatusDropdown(item) {
+      const totalIndikator = KRITERIA_CONFIG[activeTipe].length;
+      const terisi = item.terisiCount || 0;
+      const statusText = terisi > 0 ? `[Terisi ${terisi}/${totalIndikator} indikator]` : '[Belum Diisi]';
+      return `${item.no}. ${item.namaInovasi} (${item.instansi}) ${statusText}`;
+    }
+
+    function handleDropdownTypeSearch(e) {
+      if (e.key.length !== 1 || e.ctrlKey || e.metaKey || e.altKey) return;
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        blockIfUnsaved();
         return;
       }
 
-      let html = '';
+      clearTimeout(typeTimer);
+      typeBuffer += e.key.toLowerCase();
+      typeTimer = setTimeout(() => { typeBuffer = ''; }, 900);
 
-      URUTAN_KATEGORI.forEach(kategori => {
-        const items = activeList
-          .filter(item => item.kategori === kategori)
-          .sort((a, b) => b.total - a.total);
+      const select = document.getElementById('selectPeserta');
+      const matched = [...select.options].find(opt => opt.text.toLowerCase().includes(typeBuffer));
+      if (matched) {
+        e.preventDefault();
+        select.value = matched.value;
+        activePesertaIdx = Number(matched.value);
+        renderFormInput();
+      }
+    }
 
-        if (items.length === 0) return;
+    async function onJuriChange() {
+      const selectJuri = document.getElementById('selectJuri');
+      if (hasUnsavedChanges && selectJuri.dataset.prevJuri !== undefined) {
+        if (blockIfUnsaved('Nilai inovasi saat ini belum disimpan! Simpan nilai dulu sebelum mengganti juri.')) {
+          selectJuri.value = selectJuri.dataset.prevJuri;
+          return;
+        }
+      }
 
-        html += `
-          <div class="category-section">
-            <div class="section-header-row">
-              <div class="section-title">
-                <span>${items.length} Inovasi dengan Suara Tertinggi —</span>
-                <span class="badge-kategori">${kategori}</span>
-              </div>
-              <div class="table-label-right">TABEL NILAI</div>
-            </div>
+      const juriId = selectJuri.value;
+      const statusMsg = document.getElementById('statusMsg');
+      setUnsavedState(false);
+      hideAlert();
 
-            <div class="table-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th class="th-left th-rank">Peringkat</th>
-                    <th class="th-left">Nama Inovasi</th>
-                    <th class="th-left th-instansi">OPD / Unit</th>
-                    <th class="th-score">JURI 1</th>
-                    <th class="th-score">JURI 2</th>
-                    <th class="th-score">JURI 3</th>
-                    <th class="th-score">JURI 4</th>
-                    <th class="th-score">JURI 5</th>
-                    <th class="th-score">JURI 6</th>
-                    <th class="th-score">JURI 7</th>
-                    <th class="th-total">TOTAL</th>
-                  </tr>
-                </thead>
-                <tbody>
-        `;
+      if (!juriId) {
+        selectJuri.dataset.prevJuri = '';
+        document.getElementById('userBox').classList.remove('show');
+        document.getElementById('juriSelectorWrap').style.display = 'block';
+        document.getElementById('pesertaSelectorWrap').style.display = 'none';
+        document.getElementById('tabContainer').style.display = 'none';
+        document.getElementById('formCard').style.display = 'none';
+        document.getElementById('summaryCard').style.display = 'none';
+        statusMsg.textContent = 'Pilih nama juri untuk memuat daftar peserta dan kolom indikator penilaian (Nilai 1 - 10)';
+        return;
+      }
 
-        items.forEach((item, idx) => {
-          const rankNum = idx + 1;
-          const rankClass = rankNum <= 3 ? `rank-${rankNum}` : '';
-          const tipeBadge = currentTab === 'SEMUA'
-            ? `<span class="tipe-pill">${item.tipe}</span>`
-            : '';
+      if (!API_URL || API_URL.includes('GANTI_DENGAN_URL_WEB_APP_APPS_SCRIPT_ANDA')) {
+        const errText = 'API_URL di index.html belum diisi dengan URL /exec Apps Script.';
+        statusMsg.textContent = errText;
+        showRedModal(errText);
+        return;
+      }
 
-          html += `
-            <tr>
-              <td class="td-rank">
-                <span class="rank-circle ${rankClass}">${rankNum}</span>
-              </td>
-              <td>
-                <div class="inovasi-name">${escapeHtml(item.namaInovasi)} ${tipeBadge}</div>
-              </td>
-              <td>
-                <div class="instansi-name">${escapeHtml(item.instansi)}</div>
-              </td>
-              <td class="td-score">${item.juri[0]}</td>
-              <td class="td-score">${item.juri[1]}</td>
-              <td class="td-score">${item.juri[2]}</td>
-              <td class="td-score">${item.juri[3]}</td>
-              <td class="td-score">${item.juri[4]}</td>
-              <td class="td-score">${item.juri[5]}</td>
-              <td class="td-score">${item.juri[6]}</td>
-              <td class="td-total">${item.total}</td>
-            </tr>
-          `;
+      document.getElementById('formCard').style.display = 'none';
+      document.getElementById('summaryCard').style.display = 'none';
+      statusMsg.textContent = 'Memuat data juri dari spreadsheet...';
+
+      try {
+        const url = `${API_URL}?action=getData&juriId=${encodeURIComponent(juriId)}`;
+        const resp = await fetch(url, { cache: 'no-store' });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const res = await resp.json();
+
+        if (!res.success) {
+          throw new Error(res.error || 'Gagal memuat data juri');
+        }
+
+        selectJuri.dataset.prevJuri = juriId;
+        currentData = res;
+        statusMsg.textContent = 'Terhubung sebagai: ' + res.nama;
+
+        // Sembunyikan dropdown juri setelah memilih user & tampilkan panel user di header
+        document.getElementById('juriSelectorWrap').style.display = 'none';
+        document.getElementById('userBox').classList.add('show');
+
+        setupTabs(res.akses);
+      } catch (err) {
+        selectJuri.value = selectJuri.dataset.prevJuri || '';
+        const errMsg = 'Gagal memuat data juri: ' + err.message;
+        statusMsg.textContent = errMsg;
+        showRedModal(errMsg);
+      }
+    }
+
+    function setupTabs(aksesList) {
+      const tabContainer = document.getElementById('tabContainer');
+      tabContainer.innerHTML = '';
+
+      if (aksesList.length > 1) {
+        tabContainer.style.display = 'flex';
+        aksesList.forEach((tipe, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'tab-btn' + (idx === 0 ? ' active' : '');
+          btn.textContent = 'KATEGORI ' + tipe.toUpperCase();
+          btn.onclick = function() {
+            if (tipe === activeTipe) return;
+            if (blockIfUnsaved('Nilai inovasi saat ini belum disimpan! Simpan nilai dulu sebelum pindah kategori.')) {
+              return;
+            }
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            switchTipe(tipe);
+          };
+          tabContainer.appendChild(btn);
         });
+      } else {
+        tabContainer.style.display = 'none';
+      }
 
-        html += `
-                </tbody>
-              </table>
-            </div>
-          </div>
-        `;
+      switchTipe(aksesList[0]);
+    }
+
+    function switchTipe(tipe) {
+      activeTipe = tipe;
+      activePesertaIdx = 0;
+
+      const list = currentData.sheets[tipe] || [];
+      const selectPeserta = document.getElementById('selectPeserta');
+      selectPeserta.innerHTML = '';
+
+      list.forEach((item, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.textContent = formatStatusDropdown(item);
+        selectPeserta.appendChild(opt);
       });
 
-      contentArea.innerHTML = html;
+      document.getElementById('pesertaSelectorWrap').style.display = 'block';
+      document.getElementById('formCard').style.display = 'block';
+      document.getElementById('summaryCard').style.display = 'block';
+
+      renderFormInput();
+      renderSummaryTable();
+    }
+
+    function onPesertaSelectChange() {
+      const selectPeserta = document.getElementById('selectPeserta');
+      if (blockIfUnsaved()) {
+        selectPeserta.value = String(activePesertaIdx);
+        return;
+      }
+      activePesertaIdx = Number(selectPeserta.value);
+      renderFormInput();
+    }
+
+    function renderFormInput() {
+      hideAlert();
+      setUnsavedState(false);
+
+      const rawVal = document.getElementById('selectPeserta').value;
+      if (rawVal === '') return;
+
+      const idx = Number(rawVal);
+      activePesertaIdx = idx;
+
+      const list = currentData.sheets[activeTipe] || [];
+      const peserta = list[idx];
+      if (!peserta) return;
+
+      const waktuBersih = formatWaktuBersih(peserta.waktu);
+      document.getElementById('infoNamaInovasi').textContent = `${peserta.no}. ${peserta.namaInovasi}`;
+      document.getElementById('infoInstansi').textContent = `${peserta.instansi} • Jadwal: ${waktuBersih}`;
+      document.getElementById('infoKategoriBadge').textContent = `${activeTipe.toUpperCase()} — ${peserta.kategori}`;
+
+      const kriteriaList = KRITERIA_CONFIG[activeTipe];
+      const container = document.getElementById('kriteriaContainer');
+      container.className = 'kriteria-list ' + (kriteriaList.length === 7 ? 'cols-7' : 'cols-6');
+      container.innerHTML = '';
+
+      kriteriaList.forEach((k, i) => {
+        const val = peserta.skor[i] !== undefined ? peserta.skor[i] : '';
+        const div = document.createElement('div');
+        div.className = 'kriteria-item';
+        div.innerHTML = `
+          <div class="kriteria-head">
+            <span class="kriteria-nama">${escapeHtml(k.nama)}</span>
+            <span class="kriteria-bobot">Bobot ${k.bobot}%</span>
+          </div>
+          <input
+            type="number"
+            class="skor-input"
+            data-bobot="${k.bobot}"
+            min="${MIN_NILAI}"
+            max="${MAX_NILAI}"
+            step="0.01"
+            placeholder="1 - 10"
+            value="${val}"
+            oninput="onSkorInputChange(this)"
+          >
+        `;
+        container.appendChild(div);
+      });
+
+      hitungLiveTotal();
+    }
+
+    function onSkorInputChange(inputEl) {
+      if (inputEl && inputEl.value !== '') {
+        const num = Number(inputEl.value);
+        if (!isNaN(num)) {
+          if (num > MAX_NILAI) {
+            inputEl.value = MAX_NILAI;
+            showRedModal('Rentang nilai hanya 1 - 10. Nilai otomatis disesuaikan ke 10.');
+          } else if (num < MIN_NILAI) {
+            inputEl.value = MIN_NILAI;
+            showRedModal('Rentang nilai hanya 1 - 10. Nilai otomatis disesuaikan ke 1.');
+          }
+        }
+      }
+      setUnsavedState(true);
+      hitungLiveTotal();
+    }
+
+    function hitungLiveTotal() {
+      const inputs = document.querySelectorAll('.skor-input');
+      let total = 0;
+      inputs.forEach(inp => {
+        const nilai = Number(inp.value) || 0;
+        const bobot = Number(inp.dataset.bobot) || 0;
+        total += (nilai * bobot) / 100;
+      });
+      document.getElementById('liveTotal').textContent = total.toFixed(2);
+    }
+
+    async function submitNilai() {
+      const rawVal = document.getElementById('selectPeserta').value;
+      if (rawVal === '') return;
+
+      const idx = Number(rawVal);
+      const peserta = currentData.sheets[activeTipe][idx];
+      const inputs = document.querySelectorAll('.skor-input');
+
+      const skorArray = [];
+      let adaKosong = false;
+      let adaDiluarRentang = false;
+      let terisiCount = 0;
+
+      inputs.forEach(inp => {
+        if (inp.value === '') {
+          adaKosong = true;
+          skorArray.push('');
+        } else {
+          const num = Number(inp.value);
+          if (isNaN(num) || num < MIN_NILAI || num > MAX_NILAI) {
+            adaDiluarRentang = true;
+          }
+          skorArray.push(num);
+          terisiCount++;
+        }
+      });
+
+      if (adaDiluarRentang) {
+        showRedModal('Setiap nilai indikator harus berada pada rentang 1 sampai 10.');
+        return;
+      }
+
+      if (adaKosong) {
+        showRedModal('Harap isi semua indikator (rentang nilai 1 - 10) sebelum menyimpan nilai.');
+        return;
+      }
+
+      const btn = document.getElementById('btnSimpan');
+      btn.disabled = true;
+      btn.textContent = 'Menyimpan...';
+      hideAlert();
+
+      try {
+        const resp = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'simpanNilai',
+            juriId: currentData.juriId,
+            tipe: activeTipe,
+            rowNumber: peserta.rowNumber,
+            skor: skorArray
+          })
+        });
+
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const res = await resp.json();
+
+        if (res.success) {
+          peserta.skor = skorArray;
+          peserta.terisiCount = terisiCount;
+          setUnsavedState(false);
+          showAlert('success', res.message);
+
+          const selectPeserta = document.getElementById('selectPeserta');
+          const targetOpt = [...selectPeserta.options].find(o => Number(o.value) === idx);
+          if (targetOpt) {
+            targetOpt.textContent = formatStatusDropdown(peserta);
+          }
+          renderSummaryTable();
+        } else {
+          showRedModal('Gagal menyimpan: ' + res.error);
+          showAlert('error', 'Gagal menyimpan: ' + res.error);
+        }
+      } catch (err) {
+        showRedModal('Error koneksi: ' + err.message);
+        showAlert('error', 'Error koneksi: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Simpan Nilai';
+      }
+    }
+
+    function renderSummaryTable() {
+      const list = currentData.sheets[activeTipe] || [];
+      const totalIndikator = KRITERIA_CONFIG[activeTipe].length;
+      const tbody = document.getElementById('summaryBody');
+      tbody.innerHTML = '';
+
+      list.forEach((item, idx) => {
+        const terisi = item.terisiCount || 0;
+        const tr = document.createElement('tr');
+        tr.onclick = function() {
+          if (blockIfUnsaved()) return;
+          document.getElementById('selectPeserta').value = String(idx);
+          activePesertaIdx = idx;
+          renderFormInput();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+        tr.innerHTML = `
+          <td>${item.no}</td>
+          <td><strong>${escapeHtml(item.namaInovasi)}</strong></td>
+          <td>${escapeHtml(item.instansi)}</td>
+          <td>${item.kategori}</td>
+          <td style="text-align:right; font-weight:700; color:#991b1b;">${terisi} / ${totalIndikator}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function showAlert(type, msg) {
+      const box = document.getElementById('alertBox');
+      box.className = 'alert ' + type;
+      box.textContent = msg;
+    }
+
+    function hideAlert() {
+      const box = document.getElementById('alertBox');
+      box.className = 'alert';
+      box.textContent = '';
     }
 
     function escapeHtml(text) {
