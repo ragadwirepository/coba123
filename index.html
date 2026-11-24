@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Rekapitulasi Penilaian Festival Inovasi</title>
+  <style>
+    :root {
+      --primary-red: #9e1b1b;
+      --dark-red: #7f1414;
+      --light-red-bg: #fdf2f2;
+      --border-color: #e5e7eb;
+      --text-dark: #1f2937;
+      --text-muted: #6b7280;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f8fafc;
+      color: var(--text-dark);
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1380px;
+      margin: 0 auto;
+    }
+
+    /* HEADER BANNER */
+    .header-banner {
+      background: linear-gradient(90deg, #991b1b 0%, #b91c1c 100%);
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 20px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      box-shadow: 0 4px 12px rgba(153, 27, 27, 0.2);
+      margin-bottom: 20px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-box {
+      width: 48px;
+      height: 54px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 4px;
+    }
+
+    .logo-box img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .header-title h1 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      margin-bottom: 4px;
+    }
+
+    .header-title p {
+      font-size: 13px;
+      color: #fca5a5;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-pill {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #4ade80;
+      border-radius: 50%;
+    }
+
+    .btn-refresh {
+      background: #ffffff;
+      color: var(--primary-red);
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-refresh:hover {
+      background: #fee2e2;
+    }
+
+    .btn-refresh:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    /* FILTER & STATS BAR */
+    .controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .tab-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      padding: 10px 26px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: var(--text-dark);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(180deg, #b91c1c 0%, #881313 100%);
+      color: #ffffff;
+      border-color: #881313;
+      box-shadow: 0 2px 6px rgba(153, 27, 27, 0.25);
+    }
+
+    .stats-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 8px 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-dark);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    /* CATEGORY SECTION */
+    .category-section {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+
+    .section-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-kategori {
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      padding: 3px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .table-label-right {
+      font-size: 13px;
+      font-weight: 800;
+      color: #1f2937;
+      letter-spacing: 0.5px;
+    }
+
+    /* TABLE STYLING */
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid #f1f5f9;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px;
+    }
+
+    thead th {
+      padding: 12px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: left;
+    }
+
+    /* Header kiri (Pink lembut sesuai gambar) */
+    th.th-left {
+      background-color: #fdf2f2;
+      color: #991b1b;
+      border-bottom: 1px solid #fee2e2;
+    }
+
+    th.th-rank {
+      width: 90px;
+      text-align: center;
+    }
+
+    th.th-instansi {
+      width: 240px;
+    }
+
+    /* Header kanan TABEL NILAI (Merah Marun solid sesuai gambar) */
+    th.th-score {
+      background-color: var(--primary-red);
+      color: #ffffff;
+      text-align: center;
+      width: 68px;
+    }
+
+    th.th-total {
+      background-color: var(--dark-red);
+      color: #ffffff;
+      text-align: center;
+      width: 80px;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #f1f5f9;
+      transition: background 0.15s;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    tbody tr:hover {
+      background-color: #fef2f2;
+    }
+
+    tbody td {
+      padding: 13px 14px;
+      font-size: 13.5px;
+      vertical-align: middle;
+    }
+
+    td.td-rank {
+      text-align: center;
+    }
+
+    .rank-circle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 800;
+      background-color: #f1f5f9;
+      color: #475569;
+    }
+
+    .rank-1 { background-color: #fee2e2; color: #b91c1c; }
+    .rank-2 { background-color: #dbeafe; color: #1d4ed8; }
+    .rank-3 { background-color: #fef3c7; color: #b45309; }
+
+    .inovasi-name {
+      font-weight: 700;
+      color: #111827;
+      line-height: 1.4;
+    }
+
+    .tipe-pill {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 6px;
+      background: #e2e8f0;
+      color: #334155;
+      vertical-align: middle;
+    }
+
+    .instansi-name {
+      font-weight: 600;
+      color: #374151;
+      font-size: 12.5px;
+      text-transform: uppercase;
+    }
+
+    td.td-score {
+      text-align: center;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    td.td-total {
+      text-align: center;
+      font-weight: 800;
+      font-size: 14px;
+      color: var(--primary-red);
+      background-color: rgba(254, 226, 226, 0.25);
+    }
+
+    .loading-state {
+      text-align: center;
+      padding: 50px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HEADER -->
+    <div class="header-banner">
+      <div class="header-left">
+        <div class="logo-box">
+          <!-- Ganti src di bawah dengan URL logo Kota Pekalongan jika diperlukan -->
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Lambang_Kota_Pekalongan.png/240px-Lambang_Kota_Pekalongan.png" alt="Logo">
+        </div>
+        <div class="header-title">
+          <h1>Dashboard Rekapitulasi Penilaian Festival Inovasi</h1>
+          <p id="lastUpdated">Pembaruan terakhir : Memuat data...</p>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="status-pill">
+          <span class="status-dot" id="statusDot"></span>
+          <span id="statusText">Terhubung</span>
+        </div>
+        <button class="btn-refresh" id="btnRefresh" onclick="loadData()">
+          ↻ Refresh Sekarang
+        </button>
+      </div>
+    </div>
+
+    <!-- FILTER & STATS -->
+    <div class="controls-bar">
+      <div class="tab-group">
+        <button class="tab-btn active" onclick="setTab('IDE', this)">IDE</button>
+        <button class="tab-btn" onclick="setTab('AKTIF', this)">AKTIF</button>
+        <button class="tab-btn" onclick="setTab('SEMUA', this)">SEMUA</button>
+      </div>
+
+      <div class="stats-group">
+        <div class="stat-card">
+          <span class="stat-label">TOTAL INOVASI</span>
+          <span class="stat-value" id="statInovasi">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">TOTAL SUARA MASUK</span>
+          <span class="stat-value" id="statSuara">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTAINER LIST KATEGORI (URUTAN: SEKOLAH -> OPD -> UNIT) -->
+    <div id="contentArea">
+      <div class="loading-state">Memuat data rekapitulasi penilaian...</div>
+    </div>
+  </div>
+
+  <script>
+    let rawData = { ide: [], aktif: [] };
+    let currentTab = 'IDE';
+
+    // Urutan kategori wajib: SEKOLAH dulu, lalu OPD, lalu UNIT
+    const URUTAN_KATEGORI = ['SEKOLAH', 'OPD', 'UNIT'];
+
+    window.onload = function() {
+      loadData();
+      // Auto-refresh setiap 60 detik
+      setInterval(loadData, 60000);
+    };
+
+    function loadData() {
+      const btn = document.getElementById('btnRefresh');
+      const statusText = document.getElementById('statusText');
+      btn.disabled = true;
+      statusText.textContent = 'Memperbarui...';
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          btn.disabled = false;
+          if (res.success) {
+            rawData.ide = res.ide || [];
+            rawData.aktif = res.aktif || [];
+            document.getElementById('lastUpdated').textContent = 'Pembaruan terakhir : ' + res.lastUpdated;
+            statusText.textContent = 'Terhubung';
+            document.getElementById('statusDot').style.backgroundColor = '#4ade80';
+            renderDashboard();
+          } else {
+            statusText.textContent = 'Gagal Memuat';
+            document.getElementById('statusDot').style.backgroundColor = '#f87171';
+            document.getElementById('contentArea').innerHTML =
+              '<div class="loading-state">Error: ' + res.error + '</div>';
+          }
+        })
+        .withFailureHandler(function(err) {
+          btn.disabled = false;
+          statusText.textContent = 'Terputus';
+          document.getElementById('statusDot').style.backgroundColor = '#f87171';
+          document.getElementById('contentArea').innerHTML =
+            '<div class="loading-state">Gagal terhubung ke server: ' + err.message + '</div>';
+        })
+        .getDashboardData();
+    }
+
+    function setTab(tabName, btnElement) {
+      currentTab = tabName;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btnElement.classList.add('active');
+      renderDashboard();
+    }
+
+    function renderDashboard() {
+      let activeList = [];
+      if (currentTab === 'IDE') {
+        activeList = [...rawData.ide];
+      } else if (currentTab === 'AKTIF') {
+        activeList = [...rawData.aktif];
+      } else {
+        activeList = [...rawData.ide, ...rawData.aktif];
+      }
+
+      // Update Statistik
+      document.getElementById('statInovasi').textContent = activeList.length;
+      const totalSuara = activeList.reduce((acc, item) => acc + item.suaraMasuk, 0);
+      document.getElementById('statSuara').textContent = totalSuara;
+
+      const contentArea = document.getElementById('contentArea');
+      if (activeList.length === 0) {
+        contentArea.innerHTML = '<div class="loading-state">Belum ada data pada kategori ini.</div>';
+        return;
+      }
+
+      let html = '';
+
+      // Render berurutan sesuai permintaan: SEKOLAH -> OPD -> UNIT
+      URUTAN_KATEGORI.forEach(kategori => {
+        const items = activeList
+          .filter(item => item.kategori === kategori)
+          .sort((a, b) => b.total - a.total); // Urutkan dari Total Nilai tertinggi
+
+        if (items.length === 0) return;
+
+        html += `
+          <div class="category-section">
+            <div class="section-header-row">
+              <div class="section-title">
+                <span>${items.length} Inovasi dengan Suara Tertinggi —</span>
+                <span class="badge-kategori">${kategori}</span>
+              </div>
+              <div class="table-label-right">TABEL NILAI</div>
+            </div>
+
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th class="th-left th-rank">Peringkat</th>
+                    <th class="th-left">Nama Inovasi</th>
+                    <th class="th-left th-instansi">OPD / Unit</th>
+                    <th class="th-score">JURI 1</th>
+                    <th class="th-score">JURI 2</th>
+                    <th class="th-score">JURI 3</th>
+                    <th class="th-score">JURI 4</th>
+                    <th class="th-score">JURI 5</th>
+                    <th class="th-score">JURI 6</th>
+                    <th class="th-score">JURI 7</th>
+                    <th class="th-total">TOTAL</th>
+                  </tr>
+                </thead>
+                <tbody>
+        `;
+
+        items.forEach((item, idx) => {
+          const rankNum = idx + 1;
+          const rankClass = rankNum <= 3 ? `rank-${rankNum}` : '';
+          const tipeBadge = currentTab === 'SEMUA'
+            ? `<span class="tipe-pill">${item.tipe}</span>`
+            : '';
+
+          html += `
+            <tr>
+              <td class="td-rank">
+                <span class="rank-circle ${rankClass}">${rankNum}</span>
+              </td>
+              <td>
+                <div class="inovasi-name">${escapeHtml(item.namaInovasi)} ${tipeBadge}</div>
+              </td>
+              <td>
+                <div class="instansi-name">${escapeHtml(item.instansi)}</div>
+              </td>
+              <td class="td-score">${item.juri[0]}</td>
+              <td class="td-score">${item.juri[1]}</td>
+              <td class="td-score">${item.juri[2]}</td>
+              <td class="td-score">${item.juri[3]}</td>
+              <td class="td-score">${item.juri[4]}</td>
+              <td class="td-score">${item.juri[5]}</td>
+              <td class="td-score">${item.juri[6]}</td>
+              <td class="td-total">${item.total}</td>
+            </tr>
+          `;
+        });
+
+        html += `
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      });
+
+      contentArea.innerHTML = html;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
