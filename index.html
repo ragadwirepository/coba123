@@ -80,9 +80,13 @@
       font-weight: 700;
       color: #ffffff;
       margin-bottom: 4px;
+      max-width: 280px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .btn-change-user {
+    .btn-logout {
       background: #ffffff;
       color: #991b1b;
       border: 1px solid #fecaca;
@@ -96,7 +100,7 @@
       gap: 5px;
     }
 
-    .btn-change-user:hover {
+    .btn-logout:hover {
       background: #fee2e2;
     }
 
@@ -472,10 +476,10 @@
 
       <div id="userBox" class="user-box">
         <div class="user-meta">
-          <div class="user-meta-label">Nama user</div>
-          <button type="button" class="btn-change-user" onclick="openJuriSelector()">
+          <div id="headerUserName" class="user-meta-label">Nama user</div>
+          <button type="button" class="btn-logout" onclick="logoutUser()">
             <span>&#128273;</span>
-            <span>Ubah user</span>
+            <span>Logout</span>
           </button>
         </div>
         <div class="user-avatar" title="User Juri">
@@ -624,13 +628,30 @@
       return true;
     }
 
-    function openJuriSelector() {
-      if (blockIfUnsaved('Nilai inovasi saat ini belum disimpan! Simpan nilai dulu sebelum mengganti user.')) {
+    function logoutUser() {
+      if (blockIfUnsaved('Nilai inovasi saat ini belum disimpan! Simpan nilai dulu sebelum logout.')) {
         return;
       }
+
+      currentData = null;
+      activeTipe = '';
+      activePesertaIdx = 0;
+      setUnsavedState(false);
+      hideAlert();
+
+      const selectJuri = document.getElementById('selectJuri');
+      selectJuri.value = '';
+      selectJuri.dataset.prevJuri = '';
+
+      document.getElementById('headerUserName').textContent = 'Nama user';
+      document.getElementById('userBox').classList.remove('show');
       document.getElementById('juriSelectorWrap').style.display = 'block';
-      const sel = document.getElementById('selectJuri');
-      sel.focus();
+      document.getElementById('pesertaSelectorWrap').style.display = 'none';
+      document.getElementById('tabContainer').style.display = 'none';
+      document.getElementById('formCard').style.display = 'none';
+      document.getElementById('summaryCard').style.display = 'none';
+      document.getElementById('statusMsg').textContent =
+        'Pilih nama juri untuk memuat daftar peserta dan kolom indikator penilaian (Nilai 1 - 10)';
     }
 
     function formatWaktuBersih(waktuStr) {
@@ -686,14 +707,7 @@
       hideAlert();
 
       if (!juriId) {
-        selectJuri.dataset.prevJuri = '';
-        document.getElementById('userBox').classList.remove('show');
-        document.getElementById('juriSelectorWrap').style.display = 'block';
-        document.getElementById('pesertaSelectorWrap').style.display = 'none';
-        document.getElementById('tabContainer').style.display = 'none';
-        document.getElementById('formCard').style.display = 'none';
-        document.getElementById('summaryCard').style.display = 'none';
-        statusMsg.textContent = 'Pilih nama juri untuk memuat daftar peserta dan kolom indikator penilaian (Nilai 1 - 10)';
+        logoutUser();
         return;
       }
 
@@ -718,11 +732,15 @@
           throw new Error(res.error || 'Gagal memuat data juri');
         }
 
+        const selectedOptionText = selectJuri.options[selectJuri.selectedIndex]?.text || '';
+        const namaTampil = res.nama || selectedOptionText || 'Nama user';
+
         selectJuri.dataset.prevJuri = juriId;
         currentData = res;
-        statusMsg.textContent = 'Terhubung sebagai: ' + res.nama;
+        statusMsg.textContent = 'Terhubung sebagai: ' + namaTampil;
+        document.getElementById('headerUserName').textContent = namaTampil;
+        document.getElementById('headerUserName').title = namaTampil;
 
-        // Sembunyikan dropdown juri setelah memilih user & tampilkan panel user di header
         document.getElementById('juriSelectorWrap').style.display = 'none';
         document.getElementById('userBox').classList.add('show');
 
